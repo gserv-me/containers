@@ -11,6 +11,7 @@ services:
       - "traefik.http.routers.sharkey.service=sharkey"
 
       - "traefik.http.services.sharkey.loadbalancer.server.port=3000"
+      - "traefik.http.services.sharkey.loadbalancer.server.scheme=http"
 
     depends_on:
       - db
