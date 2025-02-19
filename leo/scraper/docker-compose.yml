@@ -1,0 +1,14 @@
+services:
+  leo-scraper:
+    image: ghcr.io/smalauncher/smarollingscraper:latest
+    container_name: leo-scraper
+
+    restart: unless-stopped
+
+    environment:
+      - GH_APP_ID
+      - GH_APP_KEY
+      - GH_REPO_NAME
+      - GH_REPO_ORG
+
+      - TOKEN

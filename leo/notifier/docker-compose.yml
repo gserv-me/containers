@@ -1,0 +1,14 @@
+services:
+  leo-notifier:
+    image: ghcr.io/leo40git/picartostreamnotifier:latest
+    container_name: leo-notifier
+
+    volumes:
+      - type: bind
+        source: /srv/docker/leo/notifier/servers.json
+        target: /app/servers.json
+
+    restart: unless-stopped
+
+    environment:
+      - PICARTOSTREAMNOTIFIER_CONFIG_URL
