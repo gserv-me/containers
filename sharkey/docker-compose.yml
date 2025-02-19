@@ -19,8 +19,8 @@ services:
       - meilisearch
 
     networks:
-      - sharkey
       - web
+      - sharkey
 
     environment:
       NODE_ENV: production
@@ -94,7 +94,9 @@ services:
           memory: 512M
 
 networks:
-  sharkey:
-
   web:
     external: true
+
+  sharkey:
+    driver: bridge
+    name: sharkey
