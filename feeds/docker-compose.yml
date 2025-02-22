@@ -25,7 +25,7 @@ services:
       - "traefik.http.routers.feeds.tls.certresolver=letsencrypt"
       - "traefik.http.routers.feeds.service=feeds"
 
-      - "traefik.http.services.feeds.loadbalancer.server.port=7050"
+      - "traefik.http.services.feeds.loadbalancer.server.port=80"
       - "traefik.http.services.feeds.loadbalancer.server.scheme=http"
 
     depends_on:
@@ -74,7 +74,7 @@ services:
       - "traefik.http.routers.feeds-bridge.tls.certresolver=letsencrypt"
       - "traefik.http.routers.feeds-bridge.service=feeds-bridge"
 
-      - "traefik.http.services.feeds-bridge.loadbalancer.server.port=3000"
+      - "traefik.http.services.feeds-bridge.loadbalancer.server.port=80"
       - "traefik.http.services.feeds-bridge.loadbalancer.server.scheme=http"
 
 networks:
