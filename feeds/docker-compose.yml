@@ -50,7 +50,7 @@ services:
       - feeds
 
     volumes:
-      - /srv/docker/gserv/feeds/db:/var/lib/postgresql/data
+      - /srv/docker/gserv/feeds/app/db:/var/lib/postgresql/data
 
     environment:
       - POSTGRES_DB
