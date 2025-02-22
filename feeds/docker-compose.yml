@@ -1,0 +1,86 @@
+services:
+  feeds:
+    image: freshrss/freshrss:latest
+    container_name: feeds
+    restart: unless-stopped
+
+    logging:
+      options:
+        max-size: 10m
+
+    networks:
+      - web
+      - feeds
+
+    volumes:
+      - /srv/docker/gserv/feeds/app/data:/var/www/FreshRSS/data
+      - /srv/docker/gserv/feeds/app/extensions:/var/www/FreshRSS/extensions
+
+      - /srv/docker/gserv/feeds/app/config.custom.php:/var/www/FreshRSS/data/config.custom.php
+      - /srv/docker/gserv/feeds/app/config-user.custom.php:/var/www/FreshRSS/data/config-user.custom.php
+
+    labels:
+      - "traefik.http.routers.sharkey.rule=Host(`feeds.gareth-coles.dev`)"
+      - "traefik.http.routers.sharkey.entrypoints=websecure"
+      - "traefik.http.routers.sharkey.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.sharkey.service=sharkey"
+
+      - "traefik.http.services.sharkey.loadbalancer.server.port=7050"
+      - "traefik.http.services.sharkey.loadbalancer.server.scheme=http"
+
+    depends_on:
+      - feeds-db
+      - feeds-bridge
+
+    environment:
+      CRON_MIN: '12,39'
+      LISTEN: 0.0.0.0:80
+      OIDC_ENABLED: 0
+      TRUSTED_PROXY: 172.0.0.0/8
+      TZ: Europe/Dublin
+
+  feeds-db:
+    image: postgres:16
+    container_name: feeds-db
+    restart: unless-stopped
+
+    shm_size: 128mb
+
+    networks:
+      - feeds
+
+    volumes:
+      - /srv/docker/gserv/feeds/db:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+
+  feeds-bridge:
+    image: rssbridge/rss-bridge:latest
+    container_name: feeds-bridge
+    restart: unless-stopped
+
+    networks:
+      - feeds
+
+    volumes:
+      - /srv/docker/gserv/feeds/bridge:/config
+
+    labels:
+      - "traefik.http.routers.sharkey.rule=Host(`feeds-bridge.gareth-coles.dev`)"
+      - "traefik.http.routers.sharkey.entrypoints=websecure"
+      - "traefik.http.routers.sharkey.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.sharkey.service=sharkey"
+
+      - "traefik.http.services.sharkey.loadbalancer.server.port=3000"
+      - "traefik.http.services.sharkey.loadbalancer.server.scheme=http"
+
+networks:
+  web:
+    external: true
+
+  feeds:
+    driver: bridge
+    name: sharkey
