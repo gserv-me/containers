@@ -20,11 +20,19 @@ services:
       - /srv/docker/gserv/feeds/app/config-user.custom.php:/var/www/FreshRSS/data/config-user.custom.php
 
     labels:
+      # HTTP
+      - "traefik.http.routers.feeds_http.entrypoints=web"
+      - "traefik.http.routers.feeds_http.rule=Host(`feeds.gareth-coles.dev`)"
+      - "traefik.http.routers.feeds_http.middlewares=panel_https"
+      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+
+      # HTTPS
       - "traefik.http.routers.feeds.rule=Host(`feeds.gareth-coles.dev`)"
       - "traefik.http.routers.feeds.entrypoints=websecure"
       - "traefik.http.routers.feeds.tls.certresolver=letsencrypt"
       - "traefik.http.routers.feeds.service=feeds"
 
+      # Load Balancer
       - "traefik.http.services.feeds.loadbalancer.server.port=80"
       - "traefik.http.services.feeds.loadbalancer.server.scheme=http"
 
@@ -70,11 +78,19 @@ services:
       - /srv/docker/gserv/feeds/bridge:/config
 
     labels:
+      # HTTP
+      - "traefik.http.routers.feeds-bridge_http.entrypoints=web"
+      - "traefik.http.routers.feeds-bridge_http.rule=Host(`feeds-bridge.gareth-coles.dev`)"
+      - "traefik.http.routers.feeds-bridge_http.middlewares=panel_https"
+      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+
+      # HTTPS
       - "traefik.http.routers.feeds-bridge.rule=Host(`feeds-bridge.gareth-coles.dev`)"
       - "traefik.http.routers.feeds-bridge.entrypoints=websecure"
       - "traefik.http.routers.feeds-bridge.tls.certresolver=letsencrypt"
       - "traefik.http.routers.feeds-bridge.service=feeds-bridge"
 
+      # Load Balancer
       - "traefik.http.services.feeds-bridge.loadbalancer.server.port=80"
       - "traefik.http.services.feeds-bridge.loadbalancer.server.scheme=http"
 

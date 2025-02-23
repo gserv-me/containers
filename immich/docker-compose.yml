@@ -10,11 +10,19 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
     labels:
+      # HTTP
+      - "traefik.http.routers.immich_http.entrypoints=web"
+      - "traefik.http.routers.immich_http.rule=Host(`immich.gareth-coles.dev`)"
+      - "traefik.http.routers.immich_http.middlewares=panel_https"
+      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+
+      # HTTPS
       - "traefik.http.routers.immich.rule=Host(`immich.gareth-coles.dev`)"
       - "traefik.http.routers.immich.entrypoints=websecure"
       - "traefik.http.routers.immich.tls.certresolver=letsencrypt"
       - "traefik.http.routers.immich.service=immich"
 
+      # Load Balancer
       - "traefik.http.services.immich.loadbalancer.server.port=2283"
       - "traefik.http.services.immich.loadbalancer.server.scheme=http"
 

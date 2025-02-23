@@ -4,11 +4,19 @@ services:
     container_name: syncthing
 
     labels:
+      # HTTP
+      - "traefik.http.routers.sync_http.entrypoints=web"
+      - "traefik.http.routers.sync_http.rule=Host(`sync.gserv.me`)"
+      - "traefik.http.routers.sync_http.middlewares=panel_https"
+      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+
+      # HTTPS
       - "traefik.http.routers.sync.rule=Host(`sync.gserv.me`)"
       - "traefik.http.routers.sync.entrypoints=websecure"
       - "traefik.http.routers.sync.tls.certresolver=letsencrypt"
       - "traefik.http.routers.sync.service=sync"
 
+      # Load Balancer
       - "traefik.http.services.sync.loadbalancer.server.port=8384"
       - "traefik.http.services.sync.loadbalancer.server.scheme=http"
 
