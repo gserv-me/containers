@@ -3,6 +3,15 @@ services:
     image: linuxserver/syncthing:latest
     container_name: syncthing
 
+    labels:
+      - "traefik.http.routers.sync.rule=Host(`sync.gserv.me`)"
+      - "traefik.http.routers.sync.entrypoints=websecure"
+      - "traefik.http.routers.sync.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.sync.service=sync"
+
+      - "traefik.http.services.sync.loadbalancer.server.port=8384"
+      - "traefik.http.services.sync.loadbalancer.server.scheme=http"
+
     networks:
       - web
 
@@ -12,15 +21,6 @@ services:
     volumes:
       - /srv/docker/gserv/syncthing/config:/config
       - /srv/docker/gserv/syncthing/data:/mnt
-
-    labels:
-      - "traefik.http.routers.syncthing.rule=Host(`sync.gserv.me`)"
-      - "traefik.http.routers.syncthing.entrypoints=websecure"
-      - "traefik.http.routers.syncthing.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.syncthing.service=syncthing"
-
-      - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
-      - "traefik.http.services.syncthing.loadbalancer.server.scheme=http"
 
     restart: unless-stopped
 
