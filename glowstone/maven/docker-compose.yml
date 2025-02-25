@@ -1,0 +1,33 @@
+services:
+  glowstone-maven:
+    image: sonatype/nexus3:3.70.1
+    container_name: glowstone-maven
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.glowstone-maven_http.entrypoints=web"
+      - "traefik.http.routers.glowstone-maven_http.rule=Host(`repo.glowstone.net`)"
+      - "traefik.http.routers.glowstone-maven_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.glowstone-maven.rule=Host(`repo.glowstone.net`)"
+      - "traefik.http.routers.glowstone-maven.entrypoints=websecure"
+      - "traefik.http.routers.glowstone-maven.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.glowstone-maven.service=glowstone-maven"
+
+      # Load Balancer
+      - "traefik.http.services.glowstone-maven.loadbalancer.server.port=8081"
+      - "traefik.http.services.glowstone-maven.loadbalancer.server.scheme=http"
+
+    volumes:
+      - /srv/docker/glowstone/maven:/nexus-data
+
+    networks:
+      - web
+
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
