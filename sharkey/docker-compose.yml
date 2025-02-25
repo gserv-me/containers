@@ -8,8 +8,8 @@ services:
       # HTTP
       - "traefik.http.routers.sharkey_http.entrypoints=web"
       - "traefik.http.routers.sharkey_http.rule=Host(`fedi.gareth-coles.dev`)"
-      - "traefik.http.routers.sharkey_http.middlewares=panel_https"
-      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+      - "traefik.http.routers.sharkey_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
       - "traefik.http.routers.sharkey.rule=Host(`fedi.gareth-coles.dev`)"

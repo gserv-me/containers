@@ -13,8 +13,8 @@ services:
       # HTTP
       - "traefik.http.routers.immich_http.entrypoints=web"
       - "traefik.http.routers.immich_http.rule=Host(`immich.gareth-coles.dev`)"
-      - "traefik.http.routers.immich_http.middlewares=panel_https"
-      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+      - "traefik.http.routers.immich_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
       - "traefik.http.routers.immich.rule=Host(`immich.gareth-coles.dev`)"

@@ -1,0 +1,32 @@
+services:
+  kordex-maven:
+    image: dzikoysk/reposilite:latest
+    container_name: kordex-maven
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kordex-maven_http.entrypoints=web"
+      - "traefik.http.routers.kordex-maven_http.rule=Host(`repo.kordex.dev`)"
+      - "traefik.http.routers.kordex-maven_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kordex-maven.rule=Host(`repo.kordex.dev`)"
+      - "traefik.http.routers.kordex-maven.entrypoints=websecure"
+      - "traefik.http.routers.kordex-maven.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kordex-maven.service=kordex-maven"
+
+      # Load Balancer
+      - "traefik.http.services.kordex-maven.loadbalancer.server.port=9999"
+      - "traefik.http.services.kordex-maven.loadbalancer.server.scheme=http"
+
+    volumes:
+      - /srv/docker/kordex/maven:/app/data
+
+    environment:
+      - "REPOSILITE_OPTS=--port 9999"
+      - "JAVA_OPTS=-Dreposilite.s3.skip-bucket-creation=true"
+
+    restart: unless-stopped
+    stdin_open: true
+    tty: true

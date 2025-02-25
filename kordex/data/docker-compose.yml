@@ -1,0 +1,101 @@
+services:
+  kordex-data:
+    image: ghcr.io/kord-extensions/data-collector:latest
+    container_name: kordex-data
+    restart: always
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kordex-data_http.entrypoints=web"
+      - "traefik.http.routers.kordex-data_http.rule=Host(`data.kordex.dev`)"
+      - "traefik.http.routers.kordex-data_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kordex-data.rule=Host(`data.kordex.dev`)"
+      - "traefik.http.routers.kordex-data.entrypoints=websecure"
+      - "traefik.http.routers.kordex-data.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kordex-data.service=kordex-data"
+
+      # Load Balancer
+      - "traefik.http.services.kordex-data.loadbalancer.server.port=8080"
+      - "traefik.http.services.kordex-data.loadbalancer.server.scheme=http"
+
+    depends_on:
+      - kordex-data-db
+
+    environment:
+      - DB_URL="postgresql://kordex-data-db:5432/${POSTGRES_DB}"
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+
+  kordex-data-db:
+    image: postgres:16
+    container_name: kordex-data-db
+    restart: always
+    shm_size: 128mb
+
+    volumes:
+      - /srv/docker/kordex/data:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+
+  kordex-stats:
+    image: metabase/metabase:latest
+    container_name: kordex-stats
+    restart: always
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kordex-stats_http.entrypoints=web"
+      - "traefik.http.routers.kordex-stats_http.rule=Host(`stats.kordex.dev`)"
+      - "traefik.http.routers.kordex-stats_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kordex-stats.rule=Host(`stats.kordex.dev`)"
+      - "traefik.http.routers.kordex-stats.entrypoints=websecure"
+      - "traefik.http.routers.kordex-stats.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kordex-stats.service=kordex-stats"
+
+      # Load Balancer
+      - "traefik.http.services.kordex-stats.loadbalancer.server.port=3000"
+      - "traefik.http.services.kordex-stats.loadbalancer.server.scheme=http"
+
+    depends_on:
+      - kordex-data-db
+      - kordex-stats-db
+
+    volumes:
+      - /dev/urandom:/dev/random:ro
+
+    environment:
+      - MB_DB_HOST=kordex-stats-db
+      - MB_DB_PORT=5432
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=${POSTGRES_DB}
+      - MB_DB_USER=${POSTGRES_USER}
+      - MB_DB_PASS=${POSTGRES_PASSWORD}
+
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  kordex-stats-db:
+    image: postgres:16
+    container_name: kordex-stats-db
+    restart: always
+    shm_size: 128mb
+
+    volumes:
+      - /srv/docker/kordex/stats:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD

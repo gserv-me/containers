@@ -23,8 +23,8 @@ services:
       # HTTP
       - "traefik.http.routers.feeds_http.entrypoints=web"
       - "traefik.http.routers.feeds_http.rule=Host(`feeds.gareth-coles.dev`)"
-      - "traefik.http.routers.feeds_http.middlewares=panel_https"
-      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+      - "traefik.http.routers.feeds_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
       - "traefik.http.routers.feeds.rule=Host(`feeds.gareth-coles.dev`)"
@@ -81,8 +81,8 @@ services:
       # HTTP
       - "traefik.http.routers.feeds-bridge_http.entrypoints=web"
       - "traefik.http.routers.feeds-bridge_http.rule=Host(`feeds-bridge.gareth-coles.dev`)"
-      - "traefik.http.routers.feeds-bridge_http.middlewares=panel_https"
-      - "traefik.http.middlewares.panel_https.redirectscheme.scheme=https"
+      - "traefik.http.routers.feeds-bridge_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
       - "traefik.http.routers.feeds-bridge.rule=Host(`feeds-bridge.gareth-coles.dev`)"
