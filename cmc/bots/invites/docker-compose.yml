@@ -1,0 +1,45 @@
+services:
+  cmc-bot-invites:
+    image: ghcr.io/cmc-discord/bot-invites:latest
+    container_name: cmc-bot-invites
+
+    restart: always
+
+    environment:
+      - "DB_PASSWORD=${DB_PASSWORD}"
+      - "DB_USER=${DB_USERNAME}"
+      - "DB_URL=postgresql://cmc-bot-invites-postgres:5432/${DB_NAME}"
+
+      - TOKEN
+      - SENTRY_DSN
+
+    volumes:
+      - /srv/docker/cmc/bots/invites/data:/bot/data
+
+    networks:
+      - cmc-bot-invites
+
+    depends_on:
+      - cmc-bot-invites-postgres
+
+  cmc-bot-invites-postgres:
+    image: postgres:17
+    container_name: cmc-bot-invites-postgres
+
+    restart: always
+
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+
+    volumes:
+      - /srv/docker/cmc/bots/invites/postgres:/var/lib/postgresql/data
+
+    networks:
+      - cmc-bot-invites
+
+networks:
+  cmc-bot-invites:
+    driver: bridge
+    name: cmc-bot-invites

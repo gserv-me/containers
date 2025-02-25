@@ -1,0 +1,39 @@
+services:
+  cmc-bot-general:
+    image: ghcr.io/cmc-discord/bot-general:latest
+    container_name: cmc-bot-general
+
+    restart: always
+
+    environment:
+      - "ADAPTER_MONGODB_URI=mongodb://${DB_USERNAME}:${DB_PASSWORD}@cmc-bot-general-db/"
+
+      - SENTRY_DSN
+      - TOKEN
+
+    volumes:
+      - /srv/docker/cmc/bots/general/data:/bot/data
+
+    networks:
+      - cmc-bot-general
+
+  cmc-bot-general-db:
+    image: mongo
+    container_name: cmc-bot-general-db
+
+    restart: always
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${DB_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_PASSWORD}"
+
+    volumes:
+      - /srv/docker/cmc/bots/general/mongodb:/data/db
+
+    networks:
+      - cmc-bot-general
+
+networks:
+  cmc-bot-general:
+    driver: bridge
+    name: cmc-bot-general
