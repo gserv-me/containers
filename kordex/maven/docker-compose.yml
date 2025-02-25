@@ -20,6 +20,9 @@ services:
       - "traefik.http.services.kordex-maven.loadbalancer.server.port=9999"
       - "traefik.http.services.kordex-maven.loadbalancer.server.scheme=http"
 
+    networks:
+      - web
+
     volumes:
       - /srv/docker/kordex/maven:/app/data
 
@@ -30,3 +33,7 @@ services:
     restart: unless-stopped
     stdin_open: true
     tty: true
+
+networks:
+  web:
+    external: true
