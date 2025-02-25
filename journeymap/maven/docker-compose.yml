@@ -1,0 +1,33 @@
+services:
+  journeymap-maven:
+    image: sonatype/nexus3:3.70.1
+    container_name: journeymap-maven
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.journeymap-maven_http.entrypoints=web"
+      - "traefik.http.routers.journeymap-maven_http.rule=Host(`jm.gserv.me`)"
+      - "traefik.http.routers.journeymap-maven_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.journeymap-maven.rule=Host(`jm.gserv.me`)"
+      - "traefik.http.routers.journeymap-maven.entrypoints=websecure"
+      - "traefik.http.routers.journeymap-maven.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.journeymap-maven.service=journeymap-maven"
+
+      # Load Balancer
+      - "traefik.http.services.journeymap-maven.loadbalancer.server.port=8081"
+      - "traefik.http.services.journeymap-maven.loadbalancer.server.scheme=http"
+
+    volumes:
+      - /srv/docker/journeymap/maven:/nexus-data
+
+    networks:
+      - web
+
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
