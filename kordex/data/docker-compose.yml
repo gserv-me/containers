@@ -21,11 +21,15 @@ services:
       - "traefik.http.services.kordex-data.loadbalancer.server.port=8080"
       - "traefik.http.services.kordex-data.loadbalancer.server.scheme=http"
 
+    networks:
+      - kordex-data
+      - web
+
     depends_on:
       - kordex-data-db
 
     environment:
-      - DB_URL="postgresql://kordex-data-db:5432/${DATA_DB}"
+      - "DB_URL=postgresql://kordex-data-db:5432/${DATA_DB}"
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
 
@@ -34,6 +38,9 @@ services:
     container_name: kordex-data-db
     restart: always
     shm_size: 128mb
+
+    networks:
+      - kordex-data
 
     volumes:
       - /srv/docker/kordex/data:/var/lib/postgresql/data
@@ -65,6 +72,10 @@ services:
       - "traefik.http.services.kordex-stats.loadbalancer.server.port=3000"
       - "traefik.http.services.kordex-stats.loadbalancer.server.scheme=http"
 
+    networks:
+      - kordex-data
+      - web
+
     depends_on:
       - kordex-data-db
       - kordex-stats-db
@@ -92,6 +103,9 @@ services:
     restart: always
     shm_size: 128mb
 
+    networks:
+      - kordex-data
+
     volumes:
       - /srv/docker/kordex/stats:/var/lib/postgresql/data
 
@@ -99,3 +113,11 @@ services:
       - POSTGRES_DB=${STATS_DB}
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+
+networks:
+  kordex-data:
+    driver: bridge
+    name: kordex-data
+
+  web:
+    external: true
