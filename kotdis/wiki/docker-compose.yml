@@ -1,0 +1,64 @@
+services:
+  kotdis-wiki:
+    image: requarks/wiki:2
+    container_name: kotdis-wiki
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kotdis-wiki_http.entrypoints=web"
+      - "traefik.http.routers.kotdis-wiki_http.rule=Host(`wiki.kotlindiscord.com`)"
+      - "traefik.http.routers.kotdis-wiki_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kotdis-wiki.rule=Host(`wiki.kotlindiscord.com`)"
+      - "traefik.http.routers.kotdis-wiki.entrypoints=websecure"
+      - "traefik.http.routers.kotdis-wiki.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kotdis-wiki.service=kotdis-wiki"
+
+      # Load Balancer
+      - "traefik.http.services.kotdis-wiki.loadbalancer.server.port=3000"
+      - "traefik.http.services.kotdis-wiki.loadbalancer.server.scheme=http"
+
+    depends_on:
+      - kotdis-wiki-db
+
+    environment:
+      - "DB_TYPE=postgres"
+      - "DB_HOST=kotdis-wiki-db"
+      - "DB_PORT=5432"
+
+      - "DB_USER=${POSTGRES_USER}"
+      - "DB_NAME=${POSTGRES_DB}"
+      - "DB_PASS=${POSTGRES_PASSWORD}"
+
+    restart: unless-stopped
+
+    networks:
+      - kotdis-wiki
+      - web
+
+  kotdis-wiki-db:
+    image: postgres:11-alpine
+    container_name: kotdis-wiki-db
+
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+
+    restart: unless-stopped
+
+    networks:
+      - kotdis-wiki
+
+    volumes:
+      - /srv/docker/kotdis/wiki:/var/lib/postgresql/data
+
+networks:
+  web:
+    external: true
+
+  kotdis-wiki:
+    driver: bridge
+    name: kotdis-wiki
