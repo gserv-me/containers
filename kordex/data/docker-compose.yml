@@ -25,7 +25,7 @@ services:
       - kordex-data-db
 
     environment:
-      - DB_URL="postgresql://kordex-data-db:5432/${POSTGRES_DB}"
+      - DB_URL="postgresql://kordex-data-db:5432/${DATA_DB}"
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
 
@@ -39,7 +39,7 @@ services:
       - /srv/docker/kordex/data:/var/lib/postgresql/data
 
     environment:
-      - POSTGRES_DB
+      - POSTGRES_DB=${DATA_DB}
       - POSTGRES_USER
       - POSTGRES_PASSWORD
 
@@ -76,7 +76,7 @@ services:
       - MB_DB_HOST=kordex-stats-db
       - MB_DB_PORT=5432
       - MB_DB_TYPE=postgres
-      - MB_DB_DBNAME=${POSTGRES_DB}
+      - MB_DB_DBNAME=${STATS_DB}
       - MB_DB_USER=${POSTGRES_USER}
       - MB_DB_PASS=${POSTGRES_PASSWORD}
 
@@ -96,6 +96,6 @@ services:
       - /srv/docker/kordex/stats:/var/lib/postgresql/data
 
     environment:
-      - POSTGRES_DB
+      - POSTGRES_DB=${STATS_DB}
       - POSTGRES_USER
       - POSTGRES_PASSWORD
