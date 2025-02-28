@@ -30,4 +30,4 @@ services:
     user: 1001:1001
 
     volumes:
-      - ./data:/data
+      - /srv/docker/hanna/runner/data:/data
