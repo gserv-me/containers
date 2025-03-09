@@ -28,7 +28,7 @@ services:
 
     environment:
       REPOSILITE_OPTS: "--port 9999"
-      JAVA_OPTS: "-Dreposilite.s3.skip-bucket-creation=true -Dreposilite.s3.use-s3-v4-signer"
+      JAVA_OPTS: "-Dreposilite.s3.skip-bucket-creation=true -Dreposilite.s3.use-s3-v4-signer=true"
 
     restart: unless-stopped
     stdin_open: true
