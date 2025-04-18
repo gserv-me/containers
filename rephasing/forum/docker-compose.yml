@@ -1,0 +1,75 @@
+services:
+  nodebb:
+    image: "ghcr.io/nodebb/nodebb:latest"
+    container_name: rephasing_forum
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.rephasing_forum_http.entrypoints=web"
+      - "traefik.http.routers.rephasing_forum_http.rule=Host(`forum.rephas.ing`)"
+      - "traefik.http.routers.rephasing_forum_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.rephasing_forum.rule=Host(`forum.rephas.ing`)"
+      - "traefik.http.routers.rephasing_forum.entrypoints=websecure"
+      - "traefik.http.routers.rephasing_forum.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.rephasing_forum.service=rephasing_forum"
+
+      # Load Balancer
+      - "traefik.http.services.rephasing_forum.loadbalancer.server.port=4567"
+      - "traefik.http.services.rephasing_forum.loadbalancer.server.scheme=http"
+
+    depends_on:
+      - mongodb
+      - redis
+
+    networks:
+      - rephasing-forum
+      - web
+
+    volumes:
+      - /srv/docker/rephasing/forum/build:/usr/src/app/build
+      - /srv/docker/rephasing/forum/uploads:/usr/src/app/public/uploads
+      - /srv/docker/rephasing/forum/config:/opt/config
+
+  mongodb:
+    image: "mongo:8-noble"
+    container_name: rephasing_forum_mongodb
+    restart: unless-stopped
+
+#    ports:
+#      - "27017:27017"
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $DB_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $DB_PASSWORD
+      MONGO_INITDB_DATABASE: $DB_DATABASE
+
+    volumes:
+      - /srv/docker/rephasing/forum/mongodb:/data/db
+
+    networks:
+      - rephasing-forum
+
+  redis:
+    image: "redis:7.4.2-alpine"
+    container_name: rephasing_forum_redis
+    restart: unless-stopped
+
+    command: ["redis-server", "--appendonly", "yes", "--loglevel", "warning"]
+
+    volumes:
+      - /srv/docker/rephasing/forum/redis:/data
+
+    networks:
+      - rephasing-forum
+
+networks:
+  web:
+    external: true
+
+  rephasing-forum:
+    driver: bridge
+    name: rephasing-forum
