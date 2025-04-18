@@ -21,6 +21,11 @@ services:
       - "traefik.http.services.rephasing_forum.loadbalancer.server.port=4567"
       - "traefik.http.services.rephasing_forum.loadbalancer.server.scheme=http"
 
+      # Middlewares
+      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
+      - "traefik.http.routers.rephasing_forum_http.middlewares=cloudflarewarp"
+      - "traefik.http.routers.rephasing_forum.middlewares=cloudflarewarp"
+
     depends_on:
       - mongodb
       - redis
