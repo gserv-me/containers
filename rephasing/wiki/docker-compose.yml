@@ -1,0 +1,41 @@
+services:
+  dokuwiki:
+    image: "dokuwiki/dokuwiki:stable"
+    container_name: rephasing_wiki
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.rephasing_wiki_http.entrypoints=web"
+      - "traefik.http.routers.rephasing_wiki_http.rule=Host(`wiki.rephas.ing`)"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.rephasing_wiki.rule=Host(`wiki.rephas.ing`)"
+      - "traefik.http.routers.rephasing_wiki.entrypoints=websecure"
+      - "traefik.http.routers.rephasing_wiki.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.rephasing_wiki.service=rephasing_wiki"
+
+      # Load Balancer
+      - "traefik.http.services.rephasing_wiki.loadbalancer.server.port=8080"
+      - "traefik.http.services.rephasing_wiki.loadbalancer.server.scheme=http"
+
+      # Middlewares
+      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
+      - "traefik.http.routers.rephasing_wiki_http.middlewares=https,cloudflarewarp"
+      - "traefik.http.routers.rephasing_wiki.middlewares=cloudflarewarp"
+
+    environment:
+      PHP_TIMEZONE: Europe/Dublin
+      PHP_MEMORYLIMIT: 2046M
+      PHP_UPLOADLIMIT: 64M
+
+    networks:
+      - web
+
+    volumes:
+      - /srv/docker/rephasing/wiki:/storage
+
+networks:
+  web:
+    external: true

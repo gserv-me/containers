@@ -8,7 +8,6 @@ services:
       # HTTP
       - "traefik.http.routers.rephasing_forum_http.entrypoints=web"
       - "traefik.http.routers.rephasing_forum_http.rule=Host(`forum.rephas.ing`)"
-      - "traefik.http.routers.rephasing_forum_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
@@ -23,7 +22,7 @@ services:
 
       # Middlewares
       - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
-      - "traefik.http.routers.rephasing_forum_http.middlewares=cloudflarewarp"
+      - "traefik.http.routers.rephasing_forum_http.middlewares=https,cloudflarewarp"
       - "traefik.http.routers.rephasing_forum.middlewares=cloudflarewarp"
 
     depends_on:
