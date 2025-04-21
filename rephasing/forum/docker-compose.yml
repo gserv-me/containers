@@ -30,8 +30,8 @@ services:
       - redis
 
     networks:
-      - rephasing-forum
       - web
+      - rephasing-forum
 
     volumes:
       - /srv/docker/rephasing/forum/build:/usr/src/app/build
