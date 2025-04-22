@@ -29,6 +29,11 @@ services:
       - mongodb
       - redis
 
+    entrypoint:
+      - "tini"
+      - "--"
+      - "build/entrypoint.sh"
+
     networks:
       - web
       - rephasing-forum
