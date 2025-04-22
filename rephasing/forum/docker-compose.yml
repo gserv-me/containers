@@ -35,8 +35,9 @@ services:
 
     volumes:
       - /srv/docker/rephasing/forum/build:/usr/src/app/build
-      - /srv/docker/rephasing/forum/uploads:/usr/src/app/public/uploads
       - /srv/docker/rephasing/forum/config:/opt/config
+      - /srv/docker/rephasing/forum/node_modules:/usr/src/app/node_modules
+      - /srv/docker/rephasing/forum/uploads:/usr/src/app/public/uploads
 
   mongodb:
     image: "mongo:8-noble"
