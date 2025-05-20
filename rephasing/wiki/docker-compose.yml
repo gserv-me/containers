@@ -1,6 +1,6 @@
 services:
   dokuwiki:
-    image: "dokuwiki/dokuwiki:stable"
+    image: "dokuwiki/dokuwiki:2024-02-06b"
     container_name: rephasing_wiki
     restart: unless-stopped
 
