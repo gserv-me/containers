@@ -1,0 +1,13 @@
+services:
+  rephasing-discord-bot:
+    image: ghcr.io/rephas-ing/discord-bot:latest
+    container_name: cmc-bot-general
+
+    restart: always
+
+    environment:
+      - TOKEN
+
+    volumes:
+      - /srv/docker/rephasing/bots/discord/data:/bot/data
+      - /srv/docker/rephasing/bots/discord/plugins:/bot/plugins
