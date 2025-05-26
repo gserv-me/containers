@@ -1,7 +1,7 @@
 services:
   rephasing-discord-bot:
     image: ghcr.io/rephas-ing/discord-bot:latest
-    container_name: cmc-bot-general
+    container_name: rephasing-discord-bot
 
     restart: always
 
