@@ -3,6 +3,7 @@ services:
     image: docker:dind
     container_name: "gserv-runner-dind"
     privileged: true
+    hostname: gserv-runner-dind
 
     restart: "unless-stopped"
 
