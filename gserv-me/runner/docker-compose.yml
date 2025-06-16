@@ -1,0 +1,33 @@
+services:
+  gserv-runner-dind:
+    image: docker:dind
+    container_name: "gserv-runner-dind"
+
+    privileged: true
+
+    command: ["dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false"]
+    restart: "unless-stopped"
+
+  gserv-runner:
+    image: "data.forgejo.org/forgejo/runner:6"
+    container_name: "gserv-runner"
+
+    # command: '/bin/sh -c "sleep 5; forgejo-runner daemon"'
+    command: '/bin/sh -c "while : ; do sleep 1 ; done ;"'
+    restart: "unless-stopped"
+
+    links:
+      - gserv-runner-dind
+
+    depends_on:
+      gserv-runner-dind:
+        condition: service_started
+
+    environment:
+      DOCKER_HOST: tcp://gserv-runner-dind:2375
+
+    # User without root privileges, but with access to `./data`.
+    user: 1001:1001
+
+    volumes:
+      - /srv/docker/gserv/runner/data:/data
