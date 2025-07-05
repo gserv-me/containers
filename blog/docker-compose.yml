@@ -1,5 +1,7 @@
 services:
   blog:
+    container_name: blog-gserv
+
     image: ghost:5-alpine
     restart: unless-stopped
 
@@ -20,6 +22,10 @@ services:
       - "traefik.http.services.blog.loadbalancer.server.port=2368"
       - "traefik.http.services.blog.loadbalancer.server.scheme=http"
 
+    networks:
+      - web
+      - blog
+
     environment:
       database__client: mysql
 
@@ -34,6 +40,8 @@ services:
       - /srv/docker/gserv/blog/content:/var/lib/ghost/content
 
   blog-db:
+    container_name: blog-gserv-db
+
     image: mysql:8.0
     restart: unless-stopped
 
@@ -45,3 +53,15 @@ services:
 
     volumes:
       - /srv/docker/gserv/blog/db:/var/lib/mysql
+
+    networks:
+      - blog
+
+
+networks:
+  web:
+    external: true
+
+  blog:
+    driver: bridge
+    name: blog-gserv
