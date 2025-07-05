@@ -1,0 +1,47 @@
+services:
+  blog:
+    image: ghost:5-alpine
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.blog_http.entrypoints=web"
+      - "traefik.http.routers.blog_http.rule=Host(`blog.gareth-coles.dev`)"
+      - "traefik.http.routers.blog_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.blog.rule=Host(`blog.gareth-coles.dev`)"
+      - "traefik.http.routers.blog.entrypoints=websecure"
+      - "traefik.http.routers.blog.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.blog.service=blog"
+
+      # Load Balancer
+      - "traefik.http.services.blog.loadbalancer.server.port=2368"
+      - "traefik.http.services.blog.loadbalancer.server.scheme=http"
+
+    environment:
+      database__client: mysql
+
+      database__connection__host: blog-db
+      database__connection__user: ${DB_USER}
+      database__connection__password: ${DB_PASSWORD}
+      database__connection__database: ghost
+
+      url: https://blog.gareth-coles.dev
+
+    volumes:
+      - /srv/docker/gserv/blog/content:/var/lib/ghost/content
+
+  blog-db:
+    image: mysql:8.0
+    restart: unless-stopped
+
+    environment:
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: yes
+
+    volumes:
+      - /srv/docker/gserv/blog/db:/var/lib/mysql
