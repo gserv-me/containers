@@ -90,7 +90,7 @@ services:
           url: https://kestra.gserv.me/
 
     depends_on:
-      postgres:
+      kestra-db:
         condition: service_started
 
 networks:
