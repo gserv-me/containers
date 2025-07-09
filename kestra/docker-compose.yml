@@ -73,7 +73,7 @@ services:
         kestra:
           server:
             basicAuth:
-              enabled: false
+              enabled: true
               username: "${ADMIN_EMAIL}"
               password: "${ADMIN_PASS}"
           repository:
