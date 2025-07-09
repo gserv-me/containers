@@ -1,0 +1,102 @@
+### ENV VARS
+# ADMIN_EMAIL: Admin account email.
+# ADMIN_PASS: Admin account password.
+# DB_NAME: Database name.
+# DB_PASS: Database user password.
+# DB_USER: Database user name.
+###
+
+services:
+  kestra-db:
+    container_name: kestra-db
+    image: postgres:17
+
+    volumes:
+      - /srv/docker/gserv/kestra/db:/var/lib/postgresql/data
+
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASS}"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+    networks:
+      - kestra
+
+  kestra:
+    container_name: kestra
+    image: kestra/kestra:latest
+
+    command: server standalone
+    pull_policy: always
+    user: "root"
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kestra_http.entrypoints=web"
+      - "traefik.http.routers.kestra_http.rule=Host(`kestra.gserv.me`)"
+      - "traefik.http.routers.kestra_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kestra.rule=Host(`kestra.gserv.me`)"
+      - "traefik.http.routers.kestra.entrypoints=websecure"
+      - "traefik.http.routers.kestra.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kestra.service=kestra"
+
+      # Load Balancer
+      - "traefik.http.services.kestra.loadbalancer.server.port=8080"
+      - "traefik.http.services.kestra.loadbalancer.server.scheme=http"
+
+    volumes:
+      - /srv/docker/gserv/kestra/data:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/kestra-wd:/tmp/kestra-wd
+
+    networks:
+      - kestra
+      - web
+
+    environment:
+      KESTRA_CONFIGURATION: |
+        datasources:
+          postgres:
+            url: "jdbc:postgresql://kestra-db:5432/${DB_NAME}"
+            driverClassName: "org.postgresql.Driver"
+            username: "${DB_USER}"
+            password: "${DB_PASS}"
+        kestra:
+          server:
+            basicAuth:
+              enabled: false
+              username: "${ADMIN_EMAIL}"
+              password: "${ADMIN_PASS}"
+          repository:
+            type: postgres
+          storage:
+            type: local
+            local:
+              basePath: "/app/storage"
+          queue:
+            type: postgres
+          tasks:
+            tmpDir:
+              path: /tmp/kestra-wd/tmp
+          url: https://kestra.gserv.me/
+
+    depends_on:
+      postgres:
+        condition: service_started
+
+networks:
+  web:
+    external: true
+
+  kestra:
+    driver: bridge
+    name: kestra-gserv
