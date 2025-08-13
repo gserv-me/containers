@@ -3,7 +3,9 @@ services:
     container_name: sonarqube
     image: sonarqube:community
 
+    user: "1001:1001"
     read_only: true
+    restart: unless-stopped
 
     depends_on:
       sonarqube-db:
@@ -44,6 +46,7 @@ services:
   sonarqube-db:
     container_name: postgresql
     image: postgres:17
+    restart: unless-stopped
 
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
