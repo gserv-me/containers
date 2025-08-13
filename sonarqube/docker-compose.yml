@@ -1,7 +1,7 @@
 services:
   sonarqube:
     container_name: sonarqube
-    image: sonarqube:community
+    image: mc1arke/sonarqube-with-community-branch-plugin:latest
 
     read_only: true
     restart: unless-stopped
