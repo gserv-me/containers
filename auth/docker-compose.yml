@@ -111,10 +111,10 @@ services:
     user: root
     
     depends_on:
-      postgresql:
+      auth-db:
         condition: service_healthy
         
-      redis:
+      auth-redis:
         condition: service_healthy
 
     environment:
