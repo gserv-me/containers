@@ -1,0 +1,143 @@
+### ENV VARS
+# AUTHENTIK_SECRET_KEY: Authentik secret key.
+# DB_NAME: Database name.
+# DB_PASS: Database user password.
+# DB_USER: Database user name.
+###
+
+services:
+  auth-db:
+    container_name: auth-db
+    image: docker.io/library/postgres:16-alpine
+    restart: unless-stopped
+    
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
+      
+      test:
+        - CMD-SHELL
+        - pg_isready -d $${DB_NAME} -U $${DB_USER}
+      
+    volumes:
+      - /srv/docker/gserv/auth/db:/var/lib/postgresql/data
+    
+    networks:
+      - auth
+    
+  auth-redis:
+    container_name: auth-redis
+    image: docker.io/library/redis:alpine
+    restart: unless-stopped
+    
+    command: --save 60 1 --loglevel warning
+    
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      timeout: 3s
+      
+      test:
+        - CMD-SHELL
+        - redis-cli ping | grep PONG
+      
+    volumes:
+      - /srv/docker/gserv/auth/redis:/data
+    
+    networks:
+      - auth
+      
+  auth-server:
+    container_name: auth-server
+    image: ghcr.io/goauthentik/server:2025.8.1
+    restart: unless-stopped
+    
+    command: server
+    
+    depends_on:
+      auth-db:
+        condition: service_healthy
+        
+      auth-redis:
+        condition: service_healthy
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.auth_http.entrypoints=web"
+      - "traefik.http.routers.auth_http.rule=Host(`auth.gserv.me`)"
+      - "traefik.http.routers.auth_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.auth.rule=Host(`auth.gserv.me`)"
+      - "traefik.http.routers.auth.entrypoints=websecure"
+      - "traefik.http.routers.auth.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.auth.service=auth"
+
+      # Load Balancer
+      - "traefik.http.services.auth.loadbalancer.server.port=9000"
+      - "traefik.http.services.auth.loadbalancer.server.scheme=http"
+    
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: auth-db
+      AUTHENTIK_POSTGRESQL__NAME: ${DB_NAME}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${DB_PASS}
+      AUTHENTIK_POSTGRESQL__USER: ${DB_USER}
+      AUTHENTIK_REDIS__HOST: auth-redis
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+    
+    volumes:
+      - /srv/docker/gserv/auth/media:/media
+      - /srv/docker/gserv/auth/custom-templates:/templates
+    
+    networks:
+      - auth
+      - web
+      
+  auth-worker:
+    container_name: auth-worker
+    image: ghcr.io/goauthentik/server:2025.8.1
+    restart: unless-stopped
+    
+    command: worker
+    user: root
+    
+    depends_on:
+      postgresql:
+        condition: service_healthy
+        
+      redis:
+        condition: service_healthy
+
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: auth-db
+      AUTHENTIK_POSTGRESQL__NAME: ${DB_NAME}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${DB_PASS}
+      AUTHENTIK_POSTGRESQL__USER: ${DB_USER}
+      AUTHENTIK_REDIS__HOST: auth-redis
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+    
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /srv/docker/gserv/auth/media:/media
+      - /srv/docker/gserv/auth/certs:/certs
+      - /srv/docker/gserv/auth/custom-templates:/templates
+    
+    networks:
+      - auth
+
+networks:
+  web:
+    external: true
+
+  auth:
+    driver: bridge
+    name: auth-gserv
