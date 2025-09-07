@@ -34,7 +34,7 @@ services:
       - RUNNER_TOKEN
 
     # User without root privileges, but with access to `./data`.
-    user: 1001:100
+    user: 1001:1001
 
     volumes:
       - /srv/scripts:/gserv/scripts:ro
