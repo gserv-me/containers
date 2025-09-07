@@ -1,0 +1,45 @@
+services:
+  kordex-runner-dind:
+    image: docker:dind
+    container_name: "kordex-runner-dind"
+    privileged: true
+    hostname: kordex-runner-dind
+
+    restart: "unless-stopped"
+
+    volumes:
+      - certs:/certs
+
+  kordex-runner:
+    image: "data.forgejo.org/forgejo/runner:6"
+    container_name: "kordex-runner"
+
+    command: "/gserv/scripts/container/forgejo-runner"
+    restart: "unless-stopped"
+
+    links:
+      - kordex-runner-dind
+
+    depends_on:
+      kordex-runner-dind:
+        condition: service_started
+
+    environment:
+      - DOCKER_HOST=tcp://kordex-runner-dind:2376
+      - DOCKER_TLS_VERIFY=1
+      - DOCKER_CERT_PATH=/certs/client
+
+      - FORGEJO_INSTANCE
+      - RUNNER_NAME
+      - RUNNER_TOKEN
+
+    # User without root privileges, but with access to `./data`.
+    user: 1001:100
+
+    volumes:
+      - /srv/scripts:/gserv/scripts:ro
+      - /srv/docker/kordex/runner/data:/data
+      - certs:/certs
+
+volumes:
+  certs:
