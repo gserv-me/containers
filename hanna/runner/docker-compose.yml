@@ -4,15 +4,18 @@ services:
     container_name: "hanna-runner-dind"
 
     privileged: true
+    hostname: hanna-runner-dind
 
-    command: ["dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false"]
     restart: "unless-stopped"
+
+    volumes:
+      - certs:/certs
 
   hanna-runner:
     image: "data.forgejo.org/forgejo/runner:6"
     container_name: "hanna-runner"
 
-    command: '/bin/sh -c "sleep 5; forgejo-runner daemon"'
+    command: "/gserv/scripts/container/forgejo-runner"
     restart: "unless-stopped"
 
     links:
@@ -23,10 +26,21 @@ services:
         condition: service_started
 
     environment:
-      DOCKER_HOST: tcp://hanna-runner-dind:2375
+      - DOCKER_HOST=tcp://hanna-runner-dind:2375
+      - DOCKER_TLS_VERIFY=1
+      - DOCKER_CERT_PATH=/certs/client
+
+      - FORGEJO_INSTANCE
+      - RUNNER_NAME
+      - RUNNER_TOKEN
 
     # User without root privileges, but with access to `./data`.
     user: 1001:1001
 
     volumes:
+      - /srv/scripts:/gserv/scripts:ro
       - /srv/docker/hanna/runner/data:/data
+      - certs:/certs
+
+volumes:
+  certs:

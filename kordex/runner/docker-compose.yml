@@ -2,6 +2,7 @@ services:
   kordex-runner-dind:
     image: docker:dind
     container_name: "kordex-runner-dind"
+
     privileged: true
     hostname: kordex-runner-dind
 
