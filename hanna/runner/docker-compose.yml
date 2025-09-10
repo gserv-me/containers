@@ -26,7 +26,7 @@ services:
         condition: service_started
 
     environment:
-      - DOCKER_HOST=tcp://hanna-runner-dind:2375
+      - DOCKER_HOST=tcp://hanna-runner-dind:2376
       - DOCKER_TLS_VERIFY=1
       - DOCKER_CERT_PATH=/certs/client
 
