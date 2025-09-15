@@ -1,0 +1,83 @@
+### ENV VARS
+# DB_NAME: Database name.
+# DB_PASS: Database user password.
+# DB_USER: Database user name.
+# SSH_PORT: SSH server port.
+###
+
+services:
+  gdude-git:
+    image: codeberg.org/forgejo/forgejo:12
+    container_name: gdude-git
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.auth_http.entrypoints=web"
+      - "traefik.http.routers.auth_http.rule=Host(`git.gareth-coles.dev`)"
+      - "traefik.http.routers.auth_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.auth.rule=Host(`git.gareth-coles.dev`)"
+      - "traefik.http.routers.auth.entrypoints=websecure"
+      - "traefik.http.routers.auth.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.auth.service=auth"
+
+      # Load Balancer
+      - "traefik.http.services.auth.loadbalancer.server.port=3000"
+      - "traefik.http.services.auth.loadbalancer.server.scheme=http"
+
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+
+      - FORGEJO____APP_NAME=Git (Gareth Coles)
+
+      - FORGEJO__admin__EXTERNAL_USER_DISABLE_FEATURES=deletion
+
+      - FORGEJO__server__DOMAIN=git.gareth-coles.dev
+      - FORGEJO__server__ROOT_URL=https://git.gareth-coles.dev
+      - FORGEJO__server__SSH_PORT=${SSH_PORT}
+
+      - FORGEJO__database__DB_TYPE=postgres
+      - FORGEJO__database__HOST=gdude-git-db:5432
+      - FORGEJO__database__NAME=${DB_NAME}
+      - FORGEJO__database__PASSWD=${DB_PASS}
+      - FORGEJO__database__USER=${DB_USER}
+
+    networks:
+      - git
+      - web
+
+    volumes:
+      - /srv/docker/gdude/git/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+    ports:
+      - "${SSH_PORT}:22"
+
+  gdude-git-db:
+    image: postgres:14
+    container_name: gdude-git-db
+    restart: unless-stopped
+
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_USER=${DB_USER}
+
+    networks:
+      - git
+
+    volumes:
+      - /srv/docker/gdude/git/db:/var/lib/postgresql/data
+
+networks:
+  git:
+    driver: bridge
+    name: git-gdude
+
+  web:
+    external: true
