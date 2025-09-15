@@ -8,6 +8,9 @@ services:
 
     restart: "unless-stopped"
 
+    command:
+      - "--insecure-registry gserv-registry:5000"
+
     networks:
       - registry
 
