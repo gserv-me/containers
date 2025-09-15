@@ -51,6 +51,7 @@ services:
 
     networks:
       - git
+      - registry
       - web
 
     volumes:
@@ -73,6 +74,7 @@ services:
 
     networks:
       - git
+      - registry
 
     volumes:
       - /srv/docker/gdude/git/db:/var/lib/postgresql/data
@@ -81,6 +83,9 @@ networks:
   git:
     driver: bridge
     name: git-gdude
+
+  registry:
+    external: true
 
   web:
     external: true
