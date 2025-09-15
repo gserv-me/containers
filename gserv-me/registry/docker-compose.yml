@@ -1,0 +1,26 @@
+#docker run -d -p 5000:5000 --restart always --name registry registry:3
+
+services:
+  gserv-registry:
+    image: registry:3
+    container_name: gserv-registry
+    restart: always
+
+    environment:
+      - OTEL_TRACES_EXPORTER=none
+
+    networks:
+      - registry
+
+    ports:
+      - "127.0.0.1:5000:5000"
+
+    volumes:
+      - /srv/docker/gserv/registry/auth:/auth
+      - /srv/docker/gserv/registry/certs:/certs
+      - /srv/docker/gserv/registry/data:/var/lib/registry
+
+networks:
+  registry:
+    driver: bridge
+    name: registry
