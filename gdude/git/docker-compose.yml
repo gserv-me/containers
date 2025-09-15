@@ -2,6 +2,7 @@
 # DB_NAME: Database name.
 # DB_PASS: Database user password.
 # DB_USER: Database user name.
+# SSH_DOMAIN: SSH server domain.
 # SSH_PORT: SSH server port.
 ###
 
@@ -39,6 +40,7 @@ services:
       - FORGEJO__server__DOMAIN=git.gareth-coles.dev
       - FORGEJO__server__ROOT_URL=https://git.gareth-coles.dev
       - FORGEJO__server__SSH_PORT=${SSH_PORT}
+      - FORGEJO__server__SSH_DOMAIN=${SSH_DOMAIN}
 
       - FORGEJO__database__DB_TYPE=postgres
       - FORGEJO__database__HOST=gdude-git-db:5432
