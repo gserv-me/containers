@@ -37,6 +37,7 @@ services:
       - FORGEJO__admin__EXTERNAL_USER_DISABLE_FEATURES=deletion
 
       - FORGEJO__server__DOMAIN=git.gareth-coles.dev
+      - FORGEJO__server__ROOT_URL=https://git.gareth-coles.dev
       - FORGEJO__server__SSH_PORT=${SSH_PORT}
 
       - FORGEJO__database__DB_TYPE=postgres
