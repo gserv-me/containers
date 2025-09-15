@@ -8,6 +8,9 @@ services:
 
     restart: "unless-stopped"
 
+    networks:
+      - registry
+
     volumes:
       - certs:/certs
 
@@ -17,6 +20,9 @@ services:
 
     command: "/gserv/scripts/container/forgejo-runner"
     restart: "unless-stopped"
+
+    networks:
+      - registry
 
     links:
       - gdude-git-runner-dind
@@ -44,3 +50,7 @@ services:
 
 volumes:
   certs:
+
+networks:
+  registry:
+    external: true
