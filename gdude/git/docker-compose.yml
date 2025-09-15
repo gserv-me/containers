@@ -13,20 +13,20 @@ services:
 
     labels:
       # HTTP
-      - "traefik.http.routers.auth_http.entrypoints=web"
-      - "traefik.http.routers.auth_http.rule=Host(`git.gareth-coles.dev`)"
-      - "traefik.http.routers.auth_http.middlewares=https"
+      - "traefik.http.routers.git_gdude_http.entrypoints=web"
+      - "traefik.http.routers.git_gdude_http.rule=Host(`git.gareth-coles.dev`)"
+      - "traefik.http.routers.git_gdude_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
-      - "traefik.http.routers.auth.rule=Host(`git.gareth-coles.dev`)"
-      - "traefik.http.routers.auth.entrypoints=websecure"
-      - "traefik.http.routers.auth.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.auth.service=auth"
+      - "traefik.http.routers.git_gdude.rule=Host(`git.gareth-coles.dev`)"
+      - "traefik.http.routers.git_gdude.entrypoints=websecure"
+      - "traefik.http.routers.git_gdude.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.git_gdude.service=git_gdude"
 
       # Load Balancer
-      - "traefik.http.services.auth.loadbalancer.server.port=3000"
-      - "traefik.http.services.auth.loadbalancer.server.scheme=http"
+      - "traefik.http.services.git_gdude.loadbalancer.server.port=3000"
+      - "traefik.http.services.git_gdude.loadbalancer.server.scheme=http"
 
     environment:
       - USER_UID=1000
