@@ -1,0 +1,18 @@
+services:
+  gdude-shocky:
+    # This is a private repo, auth with a Forgejo token.
+    image: git.gareth-coles.dev/gdude2002/shocky:latest
+    container_name: gdude-shocky
+
+    restart: unless-stopped
+
+    environment:
+      - TOKEN
+
+    volumes:
+      - /srv/docker/gdude/shocky/data:/bot/data
+      - /srv/docker/gdude/shocky/plugins:/bot/plugins
+
+volumes:
+  data:
+  plugins:
