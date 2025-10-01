@@ -29,7 +29,7 @@ services:
       - "traefik.http.services.code_gserv.loadbalancer.server.scheme=http"
 
     environment:
-      CODER_PG_CONNECTION_URL: "postgresql://${DB_USER}:${DB_PASS}@database/${DB_NAME}?sslmode=disable"
+      CODER_PG_CONNECTION_URL: "postgresql://${DB_USER}:${DB_PASS}@gserv-code-db/${DB_NAME}?sslmode=disable"
       CODER_HTTP_ADDRESS: "0.0.0.0:7080"
       CODER_ACCESS_URL: "${ACCESS_URL}"
 
@@ -40,7 +40,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
     depends_on:
-      database:
+      gserv-code-db:
         condition: service_healthy
 
   gserv-code-db:
