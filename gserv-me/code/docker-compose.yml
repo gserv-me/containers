@@ -1,0 +1,67 @@
+### ENV VARS
+# DB_NAME: Database name.
+# DB_PASS: Database user password.
+# DB_USER: Database user name.
+# ACCESS_URL: Base access URL for this instance.
+###
+
+services:
+  gserv-code:
+    image: ghcr.io/coder/coder:latest
+    container_name: "gserv-code"
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.code_gserv_http.entrypoints=web"
+      - "traefik.http.routers.code_gserv_http.rule=Host(`code.gserv.me`)"
+      - "traefik.http.routers.code_gserv_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.code_gserv.rule=Host(`code.gserv.me`)"
+      - "traefik.http.routers.code_gserv.entrypoints=websecure"
+      - "traefik.http.routers.code_gserv.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.code_gserv.service=code_gserv"
+
+      # Load Balancer
+      - "traefik.http.services.code_gserv.loadbalancer.server.port=7080"
+      - "traefik.http.services.code_gserv.loadbalancer.server.scheme=http"
+
+    environment:
+      CODER_PG_CONNECTION_URL: "postgresql://${DB_USER}:${DB_PASS}@database/${DB_NAME}?sslmode=disable"
+      CODER_HTTP_ADDRESS: "0.0.0.0:7080"
+      CODER_ACCESS_URL: "${ACCESS_URL}"
+
+    group_add:
+      - "989"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+  gserv-code-db:
+    image: "postgres:17"
+    container_name: "gserv-code-db"
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+
+    volumes:
+      - /srv/docker/gserv/code/db:/var/lib/postgresql/data
+
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "pg_isready -U ${DB_USER} -d ${DB_NAME}",
+      ]
+
+      interval: 5s
+      timeout: 5s
+      retries: 5
