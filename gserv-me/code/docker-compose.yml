@@ -39,6 +39,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+    networks:
+      - internal
+      - web
+
     depends_on:
       gserv-code-db:
         condition: service_healthy
@@ -56,6 +60,9 @@ services:
     volumes:
       - /srv/docker/gserv/code/db:/var/lib/postgresql/data
 
+    networks:
+      - internal
+
     healthcheck:
       test: [
         "CMD-SHELL",
@@ -65,3 +72,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+networks:
+  internal:
+    driver: bridge
+    name: gserv-code
+
+  web:
+    external: true
