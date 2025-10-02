@@ -23,6 +23,8 @@ services:
       - "traefik.http.routers.code_gserv.rule=Host(`gserv.dev`) || HostRegexp(`^.+\\.gserv\\.dev$`)"
       - "traefik.http.routers.code_gserv.entrypoints=websecure"
       - "traefik.http.routers.code_gserv.tls.certresolver=letsencrypt-dns"
+      - "traefik.http.routers.code_gserv.tls.domains[0].main=gserv.dev"
+      - "traefik.http.routers.code_gserv.tls.domains[0].sans=*.gserv.dev"
       - "traefik.http.routers.code_gserv.service=code_gserv"
 
       # Load Balancer
