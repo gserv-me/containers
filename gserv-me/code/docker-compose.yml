@@ -15,7 +15,7 @@ services:
     labels:
       # HTTP
       - "traefik.http.routers.code_gserv_http.entrypoints=web"
-      - "traefik.http.routers.code_gserv_http.rule=Host(`gserv.dev`) || HostRegexp(`^.+\.gserv\.dev$`)"
+      - "traefik.http.routers.code_gserv_http.rule=Host(`gserv.dev`) || HostRegexp(`^.+\\.gserv\\.dev$`)"
       - "traefik.http.routers.code_gserv_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
