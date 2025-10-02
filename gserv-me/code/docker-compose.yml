@@ -20,7 +20,7 @@ services:
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
-      - "traefik.http.routers.code_gserv.rule=Host(`gserv.dev`) || HostRegexp(`^.+\\.gserv\\.dev$`)""
+      - "traefik.http.routers.code_gserv.rule=Host(`gserv.dev`) || HostRegexp(`^.+\\.gserv\\.dev$`)"
       - "traefik.http.routers.code_gserv.entrypoints=websecure"
       - "traefik.http.routers.code_gserv.tls.certresolver=letsencrypt-dns"
       - "traefik.http.routers.code_gserv.service=code_gserv"
@@ -66,10 +66,7 @@ services:
       - internal
 
     healthcheck:
-      test: [
-        "CMD-SHELL",
-        "pg_isready -U ${DB_USER} -d ${DB_NAME}",
-      ]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
 
       interval: 5s
       timeout: 5s
