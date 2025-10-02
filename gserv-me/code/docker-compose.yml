@@ -3,6 +3,7 @@
 # DB_PASS: Database user password.
 # DB_USER: Database user name.
 # ACCESS_URL: Base access URL for this instance.
+# WILDCARD_ACCESS_URL: Wildcard access URL.
 ###
 
 services:
@@ -14,14 +15,14 @@ services:
     labels:
       # HTTP
       - "traefik.http.routers.code_gserv_http.entrypoints=web"
-      - "traefik.http.routers.code_gserv_http.rule=Host(`code.gserv.me`)"
+      - "traefik.http.routers.code_gserv_http.rule=Host(`gserv.dev`) || HostRegexp(`^.+\.gserv\.dev$`)"
       - "traefik.http.routers.code_gserv_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
-      - "traefik.http.routers.code_gserv.rule=Host(`code.gserv.me`)"
+      - "traefik.http.routers.code_gserv.rule=Host(`gserv.dev`) || HostRegexp(`^.+\.gserv\.dev$`)""
       - "traefik.http.routers.code_gserv.entrypoints=websecure"
-      - "traefik.http.routers.code_gserv.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.code_gserv.tls.certresolver=letsencrypt-dns"
       - "traefik.http.routers.code_gserv.service=code_gserv"
 
       # Load Balancer
@@ -32,6 +33,7 @@ services:
       CODER_PG_CONNECTION_URL: "postgresql://${DB_USER}:${DB_PASS}@gserv-code-db/${DB_NAME}?sslmode=disable"
       CODER_HTTP_ADDRESS: "0.0.0.0:7080"
       CODER_ACCESS_URL: "${ACCESS_URL}"
+      CODER_WILDCARD_ACCESS_URL: "${WILDCARD_ACCESS_URL}"
 
     group_add:
       - "989"
