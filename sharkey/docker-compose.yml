@@ -45,7 +45,7 @@ services:
 
   redis:
     restart: unless-stopped
-    image: docker.io/redis:7.0-alpine
+    image: docker.io/library/redis:alpine
     container_name: sharkey_redis
 
     networks:

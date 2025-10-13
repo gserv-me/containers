@@ -64,7 +64,7 @@ services:
       - rephasing-forum
 
   redis:
-    image: "redis:7.4.2-alpine"
+    image: docker.io/library/redis:alpine
     container_name: rephasing_forum_redis
     restart: unless-stopped
 
