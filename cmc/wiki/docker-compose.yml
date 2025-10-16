@@ -1,0 +1,37 @@
+services:
+  dokuwiki:
+    image: "dokuwiki/dokuwiki:stable"
+    container_name: cmc_wiki
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.cmc_wiki_http.entrypoints=web"
+      - "traefik.http.routers.cmc_wiki_http.rule=Host(`moderation.wiki`)"
+      - "traefik.http.routers.cmc_wiki_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.cmc_wiki.rule=Host(`moderation.wiki`)"
+      - "traefik.http.routers.cmc_wiki.entrypoints=websecure"
+      - "traefik.http.routers.cmc_wiki.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.cmc_wiki.service=cmc_wiki"
+
+      # Load Balancer
+      - "traefik.http.services.cmc_wiki.loadbalancer.server.port=8080"
+      - "traefik.http.services.cmc_wiki.loadbalancer.server.scheme=http"
+
+    environment:
+      PHP_TIMEZONE: Europe/Dublin
+      PHP_MEMORYLIMIT: 2046M
+      PHP_UPLOADLIMIT: 64M
+
+    networks:
+      - web
+
+    volumes:
+      - /srv/docker/cmc/wiki:/storage
+
+networks:
+  web:
+    external: true
