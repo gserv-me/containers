@@ -8,7 +8,7 @@ services:
       # HTTP
       - "traefik.http.routers.cmc_wiki_http.entrypoints=web"
       - "traefik.http.routers.cmc_wiki_http.rule=Host(`moderation.wiki`)"
-      - "traefik.http.routers.cmc_wiki_http.middlewares=https,cloudflarewarp"
+      - "traefik.http.routers.cmc_wiki_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
@@ -16,14 +16,10 @@ services:
       - "traefik.http.routers.cmc_wiki.entrypoints=websecure"
       - "traefik.http.routers.cmc_wiki.tls.certresolver=letsencrypt"
       - "traefik.http.routers.cmc_wiki.service=cmc_wiki"
-      - "traefik.http.routers.cmc_wiki.middlewares=cloudflarewarp"
 
       # Load Balancer
       - "traefik.http.services.cmc_wiki.loadbalancer.server.port=8080"
       - "traefik.http.services.cmc_wiki.loadbalancer.server.scheme=http"
-
-      # Other
-      - "traefik.http.middlewares.cloudflarewarp.plugin.cloudflarewarp.disableDefault=false"
 
     environment:
       PHP_TIMEZONE: Europe/Dublin
