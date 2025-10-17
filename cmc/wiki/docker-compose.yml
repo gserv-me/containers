@@ -30,7 +30,7 @@ services:
       - web
 
     volumes:
-      - /srv/docker/cmc/wiki:/storage
+      - /srv/docker/cmc/wiki/data:/storage
 
 networks:
   web:
