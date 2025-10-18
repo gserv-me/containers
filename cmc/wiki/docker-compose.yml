@@ -1,6 +1,7 @@
 services:
-  dokuwiki:
-    image: "dokuwiki/dokuwiki:stable"
+  mediawiki:
+    build: .
+
     container_name: cmc_wiki
     restart: unless-stopped
 
@@ -21,17 +22,39 @@ services:
       - "traefik.http.services.cmc_wiki.loadbalancer.server.port=8080"
       - "traefik.http.services.cmc_wiki.loadbalancer.server.scheme=http"
 
-    environment:
-      PHP_TIMEZONE: Europe/Dublin
-      PHP_MEMORYLIMIT: 2046M
-      PHP_UPLOADLIMIT: 64M
-
     networks:
       - web
+      - cmc-wiki
+
+    depends_on:
+      - database
 
     volumes:
-      - /srv/docker/cmc/wiki/data:/storage
+      - /srv/docker/cmc/wiki/images:/var/www/html/images
+    # - /srv/docker/cmc/wiki/LocalSettings.php:/var/www/html/LocalSettings.php
+
+  database:
+    image: mariadb:12
+
+    container_name: cmc_wiki_db
+    restart: unless-stopped
+
+    networks:
+      - cmc-wiki
+
+    environment:
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MARIADB_RANDOM_ROOT_PASSWORD=1
+
+    volumes:
+      - /srv/docker/cmc/wiki/db:/var/lib/mysql
 
 networks:
+  cmc-wiki:
+    driver: bridge
+    name: cmc-wiki
+
   web:
     external: true
