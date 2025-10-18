@@ -7,7 +7,8 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata \
     /var/www/html/extensions/CommonsMetadata
 
-RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
+# This repo doesn't have a branch for each MW version.
+RUN git clone --depth 1 -b REL1_43 \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/ContentStabilization \
     /var/www/html/extensions/ContentStabilization
 
