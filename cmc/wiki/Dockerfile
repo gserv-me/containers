@@ -11,6 +11,10 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/ApprovedRevs \
     /var/www/html/extensions/ApprovedRevs
 
+RUN git clone --depth 1 \
+    https://github.com/jaydenkieran/mw-discord \
+    /var/www/html/extensions/Discord
+
 # Same deal for skins, just a different directory.
 
 RUN git clone --depth 1 -b v3.9.0 \
