@@ -7,10 +7,14 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata \
     /var/www/html/extensions/CommonsMetadata
 
-# This repo doesn't have a branch for each MW version.
+# These repos don't have a branch for each MW version.
 RUN git clone --depth 1 -b REL1_43 \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/ContentStabilization \
     /var/www/html/extensions/ContentStabilization
+
+RUN git clone --depth 1 -b REL1_43 \
+    https://gerrit.wikimedia.org/r/mediawiki/extensions/OOJSPlus \
+    /var/www/html/extensions/OOJSPlus
 
 # To install PHP extensions, see below.
 # Steps should all be done in the same layer, so use one RUN command.
