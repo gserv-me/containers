@@ -31,7 +31,7 @@ services:
 
     volumes:
       - /srv/docker/cmc/wiki/images:/var/www/html/images
-    # - /srv/docker/cmc/wiki/LocalSettings.php:/var/www/html/LocalSettings.php
+      - /srv/docker/cmc/wiki/LocalSettings.php:/var/www/html/LocalSettings.php
 
   database:
     image: mariadb:12
