@@ -4,10 +4,6 @@ FROM mediawiki:stable
 # You can't store the computed version output between runs, so each layer will need to run set itself.
 
 RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
-    https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmAccount \
-    /var/www/html/extensions/ConfirmAccount
-
-RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata \
     /var/www/html/extensions/CommonsMetadata
 
