@@ -1,5 +1,15 @@
 FROM mediawiki
 
+# Install MediaWiki extensions using Git.
+
+RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH \
+    https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmAccount \
+    /var/www/html/extensions/ConfirmAccount
+
+RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH \
+    https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata \
+    /var/www/html/extensions/CommonsMetadata
+
 # To install PHP extensions, see below.
 # Steps should all be done in the same layer, so use one RUN command.
 
