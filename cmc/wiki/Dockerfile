@@ -7,6 +7,10 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/CommonsMetadata \
     /var/www/html/extensions/CommonsMetadata
 
+RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
+    https://gerrit.wikimedia.org/r/mediawiki/extensions/ContentStabilization \
+    /var/www/html/extensions/ContentStabilization
+
 # To install PHP extensions, see below.
 # Steps should all be done in the same layer, so use one RUN command.
 
