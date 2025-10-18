@@ -13,7 +13,7 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
 
 # Same deal for skins, just a different directory.
 
-RUN git clone --depth 1 -b 3.9.0 \
+RUN git clone --depth 1 -b v3.9.0 \
     https://github.com/StarCitizenTools/mediawiki-skins-Citizen/ \
     /var/www/html/skins/Citizen
 
