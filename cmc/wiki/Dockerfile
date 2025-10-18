@@ -1,5 +1,29 @@
 FROM mediawiki:stable
 
+# Add dependencies.
+RUN apt update && apt install -y libzip-dev
+
+# Add PHP extensions.
+RUN docker-php-source extract && \
+	docker-php-ext-install -j$(nproc) zip && \
+	docker-php-source delete
+
+#   => Configure extensions
+#   docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+
+#   => Install from PECL
+#   pecl install xdebug-2.5.0 && \
+#	docker-php-ext-enable redis xdebug && \
+
+
+# Install Composer.
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer update
+
+# Install MediaWiki extensions using Composer.
+RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
+RUN composer update mediawiki/sub-page-list --no-dev -o
+
 # Install MediaWiki extensions using Git.
 # You can't store the computed version output between runs, so each layer will need to run set itself.
 
@@ -20,22 +44,3 @@ RUN git clone --depth 1 \
 RUN git clone --depth 1 -b v3.9.0 \
     https://github.com/StarCitizenTools/mediawiki-skins-Citizen/ \
     /var/www/html/skins/Citizen
-
-# To install PHP extensions, see below.
-# Steps should all be done in the same layer, so use one RUN command.
-
-#   => Extract PHP source files
-# RUN docker-php-source extract && \
-
-#   => Installing core extensions
-#   docker-php-ext-install -j$(nproc) iconv mcrypt && \
-
-#   => Configuring extensions
-#   docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
-
-#   => Installing from PECL
-#   pecl install xdebug-2.5.0 && \
-#	docker-php-ext-enable redis xdebug && \
-
-#   => Delete extracted source files
-#	docker-php-source delete
