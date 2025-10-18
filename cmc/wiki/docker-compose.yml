@@ -19,7 +19,7 @@ services:
       - "traefik.http.routers.cmc_wiki.service=cmc_wiki"
 
       # Load Balancer
-      - "traefik.http.services.cmc_wiki.loadbalancer.server.port=8080"
+      - "traefik.http.services.cmc_wiki.loadbalancer.server.port=80"
       - "traefik.http.services.cmc_wiki.loadbalancer.server.scheme=http"
 
     networks:
