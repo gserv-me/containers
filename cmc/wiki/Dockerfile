@@ -11,6 +11,12 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/ApprovedRevs \
     /var/www/html/extensions/ApprovedRevs
 
+# Same deal for skins, just a different directory.
+
+RUN git clone --depth 1 -b 3.9.0 \
+    https://github.com/StarCitizenTools/mediawiki-skins-Citizen/ \
+    /var/www/html/skins/Citizen
+
 # To install PHP extensions, see below.
 # Steps should all be done in the same layer, so use one RUN command.
 
