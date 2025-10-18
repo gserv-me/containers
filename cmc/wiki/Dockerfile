@@ -2,6 +2,8 @@ FROM mediawiki
 
 # Install MediaWiki extensions using Git.
 
+RUN mkdir -p /var/www/html/extensions
+
 RUN git clone --depth 1 -b $MEDIAWIKI_BRANCH \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmAccount \
     /var/www/html/extensions/ConfirmAccount
