@@ -38,7 +38,7 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
 
 # Some extensions don't have a branch for the current MediaWiki version.
 
-RUN git clone --depth 1 -b REL1_39 \
+RUN git clone --depth 1 \
     https://github.com/jaydenkieran/mw-discord \
     /var/www/html/extensions/Discord
 
