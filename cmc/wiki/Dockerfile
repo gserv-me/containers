@@ -21,8 +21,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer update
 
 # Install MediaWiki extensions using Composer.
+RUN cp composer.local.json-sample composer.local.json
 RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
-RUN composer update mediawiki/sub-page-list --no-dev -o
+RUN composer update --no-dev -o
 
 # Install MediaWiki extensions using Git.
 # You can't store the computed version output between runs, so each layer will need to run set itself.
