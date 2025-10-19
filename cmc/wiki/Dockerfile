@@ -36,13 +36,8 @@ RUN git clone --depth 1 -b REL$(echo $MEDIAWIKI_MAJOR_VERSION | sed 's/\./_/') \
     https://gerrit.wikimedia.org/r/mediawiki/extensions/ApprovedRevs \
     /var/www/html/extensions/ApprovedRevs
 
-# Some extensions don't have a branch for the current MediaWiki version.
-
-RUN git clone --depth 1 \
-    https://github.com/jaydenkieran/mw-discord \
-    /var/www/html/extensions/Discord
-
 # Same deal for skins, just a different directory.
+# Some extensions don't have a branch for the current MediaWiki version.
 
 RUN git clone --depth 1 -b v3.9.0 \
     https://github.com/StarCitizenTools/mediawiki-skins-Citizen/ \
