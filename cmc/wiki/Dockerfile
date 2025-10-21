@@ -8,7 +8,9 @@ RUN apt update && apt install -y libzip-dev unzip wget
 RUN wget https://use.fontawesome.com/releases/v7.1.0/fontawesome-free-7.1.0-web.zip -v -O ./fa.zip && \
 	mkdir ./fa && \
     unzip ./fa.zip -d ./fa && \
-    rm ./fa.zip
+    rm ./fa.zip && \
+    cp -R ./fa/fontawsome-free-*/* . && \
+    rm -rf ./fa/fontawesome-free-*/
 
 # Add PHP extensions.
 # RUN docker-php-source extract && \
