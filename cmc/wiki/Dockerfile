@@ -1,4 +1,4 @@
-FROM mediawiki:stable
+FROM mediawiki:stable AS dependencies-step
 
 # Add dependencies.
 RUN apt update && apt install -y libzip-dev unzip wget
@@ -28,6 +28,8 @@ RUN bash -c "cp -r ./fa/fontawesome-*/* ./fa/" && \
 # Install Composer.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN cp composer.local.json-sample composer.local.json
+
+FROM dependencies-step AS extensions-step
 
 # Require MediaWiki extensions using Composer.
 RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
