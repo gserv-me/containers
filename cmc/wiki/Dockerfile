@@ -21,6 +21,7 @@ RUN cp composer.local.json-sample composer.local.json
 
 # Require MediaWiki extensions using Composer.
 RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
+RUN COMPOSER=composer.local.json composer require --no-update mediawiki/font-awesome:~4.0
 
 # Install any extensions and package updates.
 RUN composer update --no-dev -o
