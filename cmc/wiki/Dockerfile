@@ -1,7 +1,14 @@
 FROM mediawiki:stable
 
 # Add dependencies.
-RUN apt update && apt install -y libzip-dev unzip
+RUN apt update && apt install -y libzip-dev unzip wget
+
+# Add Font Awesome
+
+RUN wget https://use.fontawesome.com/releases/v7.1.0/fontawesome-free-7.1.0-web.zip -v -O ./fa.zip && \
+	mkdir ./fa && \
+    unzip ./fa.zip -d ./fa && \
+    rm ./fa.zip
 
 # Add PHP extensions.
 # RUN docker-php-source extract && \
@@ -21,7 +28,6 @@ RUN cp composer.local.json-sample composer.local.json
 
 # Require MediaWiki extensions using Composer.
 RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
-RUN COMPOSER=composer.local.json composer require --no-update mediawiki/font-awesome:~4.0
 
 # Install any extensions and package updates.
 RUN composer update --no-dev -o
