@@ -13,6 +13,16 @@ RUN wget https://use.fontawesome.com/releases/v7.1.0/fontawesome-free-7.1.0-web.
 RUN bash -c "cp -r ./fa/fontawesome-*/* ./fa/" && \
     bash -c "rm -rf ./fa/fontawesome-*/"
 
+# Add Lucide
+
+RUN wget https://github.com/lucide-icons/lucide/releases/download/0.546.0/lucide-font-0.546.0.zip -v -O ./lucide.zip && \
+	mkdir ./lucide && \
+    unzip ./lucide.zip -d ./lucide && \
+    rm ./lucide.zip
+
+RUN bash -c "cp -r ./lucide/*/* ./lucide/" && \
+    bash -c "rm -rf ./lucide/*/"
+
 # Add PHP extensions.
 # RUN docker-php-source extract && \
 #   docker-php-ext-install -j$(nproc) zip && \
