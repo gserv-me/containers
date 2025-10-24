@@ -42,7 +42,7 @@ RUN cp composer.local.json-sample composer.local.json
 FROM dependencies-step AS extensions-step
 
 # Require MediaWiki extensions using Composer.
-RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
+# RUN COMPOSER=composer.local.json composer require --no-update mediawiki/sub-page-list:~3.0
 
 # Install any extensions and package updates.
 RUN composer update --no-dev -o
