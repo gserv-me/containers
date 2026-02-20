@@ -38,6 +38,9 @@ services:
       - /srv/docker/gserv/sonarqube/logs:/opt/sonarqube/logs
       - /srv/docker/gserv/sonarqube/temp:/opt/sonarqube/temp
 
+    tmpfs:
+      - /tmp:size=256M,mode=1777
+
     networks:
       - web
       - sonarqube
