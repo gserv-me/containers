@@ -1,0 +1,68 @@
+services:
+  hanna-spindle-dind:
+    image: docker:dind
+    container_name: hanna-spindle-dind
+
+    privileged: true
+    hostname: hanna-spindle-dind
+
+    volumes:
+      - certs:/certs
+
+    networks:
+      - internal
+
+  hanna-spindle:
+    build: .
+    container_name: hanna-spindle
+
+    restart: unless-stopped
+
+    links:
+      - hanna-spindle-dind
+
+    depends_on:
+      hanna-spindle-dind:
+        condition: service_started
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.hanna-spindle_http.entrypoints=web"
+      - "traefik.http.routers.hanna-spindle_http.rule=Host(`spindle.hanna.lol`)"
+      - "traefik.http.routers.hanna-spindle_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.hanna-spindle.rule=Host(`spindle.hanna.lol`)"
+      - "traefik.http.routers.hanna-spindle.entrypoints=websecure"
+      - "traefik.http.routers.hanna-spindle.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.hanna-spindle.service=hanna-spindle"
+
+      # Load Balancer
+      - "traefik.http.services.hanna-spindle.loadbalancer.server.port=6555"
+      - "traefik.http.services.hanna-spindle.loadbalancer.server.scheme=http"
+
+    environment:
+      SPINDLE_SERVER_HOSTNAME: "spindle.hanna.lol"
+      SPINDLE_SERVER_OWNER: "did:plc:4nkhkdtdosz2araixmpkz7en"
+      SPINDLE_PIPELINES_WORKFLOW_TIMEOUT: "60m"
+      DOCKER_HOST: "tcp://hanna-spindle-dind:2375"
+
+    volumes:
+      - /srv/docker/hanna/runner-spindle/data:/var/lib/spindle
+      - /srv/docker/hanna/runner-spindle/logs:/var/log/spindle
+
+    networks:
+      - internal
+      - web
+
+volumes:
+  certs:
+
+networks:
+  internal:
+    driver: bridge
+    name: hanna-spindle
+
+  web:
+    external: true
