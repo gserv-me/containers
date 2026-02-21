@@ -6,8 +6,8 @@ services:
     privileged: true
     hostname: hanna-spindle-dind
 
-    volumes:
-      - certs:/certs
+    environment:
+      DOCKER_TLS_CERTDIR: ''
 
     networks:
       - internal
@@ -55,9 +55,6 @@ services:
     networks:
       - internal
       - web
-
-volumes:
-  certs:
 
 networks:
   internal:
