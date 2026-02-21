@@ -46,7 +46,7 @@ services:
       SPINDLE_SERVER_HOSTNAME: "spindle.hanna.lol"
       SPINDLE_SERVER_OWNER: "did:plc:4nkhkdtdosz2araixmpkz7en"
       SPINDLE_PIPELINES_WORKFLOW_TIMEOUT: "60m"
-      DOCKER_HOST: "tcp://hanna-spindle-dind:2376"
+      DOCKER_HOST: "tcp://hanna-spindle-dind:2375"
 
     volumes:
       - /srv/docker/hanna/runner-spindle/data:/var/lib/spindle
