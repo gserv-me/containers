@@ -44,7 +44,7 @@ services:
 
     environment:
       SPINDLE_SERVER_HOSTNAME: "spindle.hanna.lol"
-      SPINDLE_SERVER_OWNER: "did:plc:4nkhkdtdosz2araixmpkz7en"
+      SPINDLE_SERVER_OWNER: "did:plc:43dw3zb6rtu5hs32zlel42ry"
       SPINDLE_PIPELINES_WORKFLOW_TIMEOUT: "60m"
       DOCKER_HOST: "tcp://hanna-spindle-dind:2375"
 
