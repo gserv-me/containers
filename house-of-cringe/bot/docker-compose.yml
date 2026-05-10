@@ -1,0 +1,14 @@
+services:
+  house-of-cringe-bot:
+    image: codeberg.org/gdude2002/bot-of-cringe:latest
+    container_name: house-of-cringe-bot
+
+    volumes:
+      - type: bind
+        source: /srv/docker/house-of-cringe/bot/data
+        target: /bot/data
+
+    restart: unless-stopped
+
+    environment:
+      - TOKEN
