@@ -11,4 +11,5 @@ services:
     restart: unless-stopped
 
     environment:
+      - TEST_SERVER_ID
       - TOKEN
