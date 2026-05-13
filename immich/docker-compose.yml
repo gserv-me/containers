@@ -7,6 +7,7 @@ services:
 
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /srv/docker/gserv/immich/external:/mnt/external
       - /etc/localtime:/etc/localtime:ro
 
     labels:
