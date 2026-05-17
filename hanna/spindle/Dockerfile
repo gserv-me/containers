@@ -3,7 +3,7 @@ from alpine:edge as builder
 workdir /src
 
 run apk add alpine-sdk git go
-run git clone --depth=1 https://tangled.org/tangled.org/core .
+run git clone --depth=1 https://tangled.org/tangled.org/core . -b v1.14.0-alpha
 run mkdir -p bin && go build -o bin/spindle ./cmd/spindle
 
 from alpine:edge as runner
