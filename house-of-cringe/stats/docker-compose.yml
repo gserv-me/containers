@@ -70,7 +70,7 @@ services:
       MB_DB_PORT: 5432
       MB_DB_USER: stats
       MB_DB_PASS: stats
-      MB_DB_HOST: stats
+      MB_DB_HOST: house-stats-db
 
     volumes:
       - /dev/urandom:/dev/random:ro
