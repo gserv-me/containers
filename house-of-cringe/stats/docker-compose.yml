@@ -1,0 +1,88 @@
+version: "3.8"
+services:
+  house-stats-bot:
+    image: ghcr.io/python-discord/metricity:latest
+    container_name: house-stats-bot
+
+    restart: on-failure
+
+    depends_on:
+      - house-stats-db
+
+    volumes:
+      - ./config.toml:/metricity/config.toml
+
+    environment:
+      - "DATABASE_URI=postgres://stats:stats@house-stats-db/stats"
+      - "BOT_TOKEN=$BOT_TOKEN"
+
+    networks:
+      - house-stats
+
+  house-stats-db:
+    image: postgres:13-alpine
+    container_name: house-stats-db
+
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: stats
+      POSTGRES_USER: stats
+
+    restart: on-failure
+
+    volumes:
+      - /etc/docker/house/stats/postgres:/var/lib/postgresql/data
+      - ./create-stats-db.sh:/docker-entrypoint-initdb.d/create-stats-db.sh
+      - ./create-metabase-db.sh:/docker-entrypoint-initdb.d/create-metabase-db.sh
+
+    networks:
+      - house-stats
+
+  house-stats-metabase:
+    image: metabase/metabase:latest
+    container_name: house-stats-metabase
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kordex-stats_http.entrypoints=web"
+      - "traefik.http.routers.kordex-stats_http.rule=Host(`stats.kordex.dev`)"
+      - "traefik.http.routers.kordex-stats_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kordex-stats.rule=Host(`stats.kordex.dev`)"
+      - "traefik.http.routers.kordex-stats.entrypoints=websecure"
+      - "traefik.http.routers.kordex-stats.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kordex-stats.service=kordex-stats"
+
+      # Load Balancer
+      - "traefik.http.services.kordex-stats.loadbalancer.server.port=3000"
+      - "traefik.http.services.kordex-stats.loadbalancer.server.scheme=http"
+
+    restart: on-failure
+
+    depends_on:
+      - house-stats-db
+
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_USER: stats
+      MB_DB_PASS: stats
+      MB_DB_HOST: stats
+
+    volumes:
+      - /dev/urandom:/dev/random:ro
+
+    networks:
+      - house-stats
+      - web
+
+networks:
+  shared:
+    driver: bridge
+    name: house-stats
+
+  web:
+    external: true
