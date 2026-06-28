@@ -80,7 +80,7 @@ services:
       - web
 
 networks:
-  shared:
+  house-stats:
     driver: bridge
     name: house-stats
 
