@@ -38,26 +38,26 @@ services:
     networks:
       - house-stats
 
-  house-stats-metabase:
+  house-stats:
     image: metabase/metabase:latest
-    container_name: house-stats-metabase
+    container_name: house-stats
 
     labels:
       # HTTP
-      - "traefik.http.routers.kordex-stats_http.entrypoints=web"
-      - "traefik.http.routers.kordex-stats_http.rule=Host(`stats.kordex.dev`)"
-      - "traefik.http.routers.kordex-stats_http.middlewares=https"
+      - "traefik.http.routers.house-stats_http.entrypoints=web"
+      - "traefik.http.routers.house-stats_http.rule=Host(`stats-house.mercie.dev`)"
+      - "traefik.http.routers.house-stats_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
-      - "traefik.http.routers.kordex-stats.rule=Host(`stats.kordex.dev`)"
-      - "traefik.http.routers.kordex-stats.entrypoints=websecure"
-      - "traefik.http.routers.kordex-stats.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.kordex-stats.service=kordex-stats"
+      - "traefik.http.routers.house-stats.rule=Host(`stats-house.mercie.dev`)"
+      - "traefik.http.routers.house-stats.entrypoints=websecure"
+      - "traefik.http.routers.house-stats.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.house-stats.service=house-stats"
 
       # Load Balancer
-      - "traefik.http.services.kordex-stats.loadbalancer.server.port=3000"
-      - "traefik.http.services.kordex-stats.loadbalancer.server.scheme=http"
+      - "traefik.http.services.house-stats.loadbalancer.server.port=3000"
+      - "traefik.http.services.house-stats.loadbalancer.server.scheme=http"
 
     restart: on-failure
 
