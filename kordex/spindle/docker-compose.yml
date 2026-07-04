@@ -1,0 +1,65 @@
+services:
+  kordex-spindle-dind:
+    image: docker:dind
+    container_name: kordex-spindle-dind
+
+    privileged: true
+    hostname: kordex-spindle-dind
+
+    environment:
+      DOCKER_TLS_CERTDIR: ''
+
+    networks:
+      - internal
+
+  kordex-spindle:
+    build: .
+    container_name: kordex-spindle
+
+    restart: unless-stopped
+
+    links:
+      - kordex-spindle-dind
+
+    depends_on:
+      kordex-spindle-dind:
+        condition: service_started
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.kordex-spindle_http.entrypoints=web"
+      - "traefik.http.routers.kordex-spindle_http.rule=Host(`spindle.kordex.dev`)"
+      - "traefik.http.routers.kordex-spindle_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.kordex-spindle.rule=Host(`spindle.kordex.dev`)"
+      - "traefik.http.routers.kordex-spindle.entrypoints=websecure"
+      - "traefik.http.routers.kordex-spindle.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.kordex-spindle.service=kordex-spindle"
+
+      # Load Balancer
+      - "traefik.http.services.kordex-spindle.loadbalancer.server.port=6555"
+      - "traefik.http.services.kordex-spindle.loadbalancer.server.scheme=http"
+
+    environment:
+      SPINDLE_SERVER_HOSTNAME: "spindle.kordex.dev"
+      SPINDLE_SERVER_OWNER: "did:plc:dcfbwfrsvuerqkvlimnnzoqq"
+      SPINDLE_PIPELINES_WORKFLOW_TIMEOUT: "60m"
+      DOCKER_HOST: "tcp://kordex-spindle-dind:2375"
+
+    volumes:
+      - /srv/docker/kordex/runner-spindle/data:/var/lib/spindle
+      - /srv/docker/kordex/runner-spindle/logs:/var/log/spindle
+
+    networks:
+      - internal
+      - web
+
+networks:
+  internal:
+    driver: bridge
+    name: kordex-spindle
+
+  web:
+    external: true
