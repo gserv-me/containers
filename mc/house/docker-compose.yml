@@ -28,10 +28,10 @@ services:
       TZ: "Europe/Dublin"
       USE_MEOWICE_FLAGS: "true"
 
-      MODPACK_PLATFORM: "AUTO_CURSEFORGE"
+      MODPACK_PLATFORM: "CURSEFORGE"
 
       CF_API_KEY: "${API_KEY}"
-      CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/society-sunlit-valley/files/8171106
+      CF_SERVER_MOD: "/modpacks/PACK_4.0.9.zip"
 
       CURSEFORGE_FILES: |-
         https://www.curseforge.com/minecraft/mc-mods/dcintegration/files/5332465
@@ -45,3 +45,4 @@ services:
     volumes:
       - "/srv/minecraft/house/server:/data"
       - "/srv/minecraft/house/downloads:/downloads"
+      - "/srv/minecraft/house/modpacks:/modpacks"
