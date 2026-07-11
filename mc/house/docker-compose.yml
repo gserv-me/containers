@@ -5,8 +5,8 @@ services:
     stdin_open: true
 
     ports:
-      - "25565:25565"
-      - "25566:25566"
+      - "25665:25565"
+      - "25666:25566"
 
     environment:
       ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
