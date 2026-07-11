@@ -27,6 +27,7 @@ services:
       SERVER_NAME: "House of Change"
       TZ: "Europe/Dublin"
       USE_MEOWICE_FLAGS: "true"
+      USE_MODPACK_START_SCRIPT: "false"
 
       MODPACK_PLATFORM: "CURSEFORGE"
 
