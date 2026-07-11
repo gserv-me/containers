@@ -17,7 +17,7 @@ services:
       EULA: "TRUE"
       EXISTING_OPS_FILE: "MERGE"
       EXISTING_WHITELIST_FILE: "MERGE"
-      FORGE_VERSION: "1.20.1-47.4.0"
+      FORGE_VERSION: "47.4.0"
       HIDE_ONLINE_PLAYERS: "true"
       LOG_TIMESTAMP: "true"
       MAX_PLAYERS: "30"
