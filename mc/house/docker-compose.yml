@@ -1,0 +1,47 @@
+services:
+  mc-hoc:
+    image: itzg/minecraft-server:java21
+    tty: true
+    stdin_open: true
+
+    ports:
+      - "25565:25565"
+      - "25566:25566"
+
+    environment:
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
+      DIFFICULTY: "2"
+      ENABLE_COMMAND_BLOCK: "true"
+      ENABLE_ROLLING_LOGS: "true"
+      ENABLE_WHITELIST: "true"
+      EULA: "TRUE"
+      EXISTING_OPS_FILE: "MERGE"
+      EXISTING_WHITELIST_FILE: "MERGE"
+      HIDE_ONLINE_PLAYERS: "true"
+      LOG_TIMESTAMP: "true"
+      MAX_PLAYERS: "30"
+      MEMORY: "10240M"
+      MOTD: "House of Change"
+      PREVENT_PROXY_CONNECTIONS: "true"
+      PREVIEWS_CHAT: "true"
+      SERVER_NAME: "House of Change"
+      TZ: "Europe/Dublin"
+      USE_MEOWICE_FLAGS: "true"
+
+      MODPACK_PLATFORM: "AUTO_CURSEFORGE"
+
+      CF_API_KEY: "$API_KEY"
+      CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/society-sunlit-valley/files/8171106
+
+      CURSEFORGE_FILES: |-
+        https://www.curseforge.com/minecraft/mc-mods/dcintegration/files/5332465
+
+      OPS: |-
+        1a07ce68-7eba-4609-909a-d6731a090138
+
+      WHITELIST: |-
+        1a07ce68-7eba-4609-909a-d6731a090138
+
+    volumes:
+      - "/srv/minecraft/house/server:/data"
+      - "/srv/minecraft/house/downloads:/downloads"
