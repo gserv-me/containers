@@ -17,6 +17,7 @@ services:
       EULA: "TRUE"
       EXISTING_OPS_FILE: "MERGE"
       EXISTING_WHITELIST_FILE: "MERGE"
+      FORGE_VERSION: "1.20.1-47.4.0"
       HIDE_ONLINE_PLAYERS: "true"
       LOG_TIMESTAMP: "true"
       MAX_PLAYERS: "30"
@@ -25,9 +26,11 @@ services:
       PREVENT_PROXY_CONNECTIONS: "true"
       PREVIEWS_CHAT: "true"
       SERVER_NAME: "House of Change"
+      TYPE: "FORGE"
       TZ: "Europe/Dublin"
       USE_MEOWICE_FLAGS: "true"
       USE_MODPACK_START_SCRIPT: "false"
+      VERSION: "1.20.1"
 
       MODPACK_PLATFORM: "CURSEFORGE"
 
