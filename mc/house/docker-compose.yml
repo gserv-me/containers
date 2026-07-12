@@ -23,7 +23,6 @@ services:
       MAX_PLAYERS: "30"
       MEMORY: "10240M"
       MOTD: "House of Change"
-      PREVENT_PROXY_CONNECTIONS: "true"
       PREVIEWS_CHAT: "true"
       SERVER_NAME: "House of Change"
       TYPE: "FORGE"
