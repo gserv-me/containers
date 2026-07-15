@@ -6,7 +6,26 @@ services:
 
     ports:
       - "25665:25565"
-      - "25666:25566"
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.mc-hoc-map_http.entrypoints=web"
+      - "traefik.http.routers.mc-hoc-map_http.rule=Host(`mc-house.mercie.dev`)"
+      - "traefik.http.routers.mc-hoc-map_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.mc-hoc-map.rule=Host(`mc-house.mercie.dev`)"
+      - "traefik.http.routers.mc-hoc-map.entrypoints=websecure"
+      - "traefik.http.routers.mc-hoc-map.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.mc-hoc-map.service=mc-hoc-map"
+
+      # Load Balancer
+      - "traefik.http.services.mc-hoc-map.loadbalancer.server.port=25566"
+      - "traefik.http.services.mc-hoc-map.loadbalancer.server.scheme=http"
+
+    networks:
+      - web
 
     environment:
       ANNOUNCE_PLAYER_ACHIEVEMENTS: "true"
@@ -52,3 +71,8 @@ services:
       - "/srv/minecraft/house/server:/data"
       - "/srv/minecraft/house/downloads:/downloads"
       - "/srv/minecraft/house/modpacks:/modpacks"
+
+
+networks:
+  web:
+    external: true
