@@ -37,12 +37,16 @@ services:
 
       MODRINTH_PROJECTS: |-
         nicknames:PDECWy8H
+        bluemap:kC7iYqja
 
       OPS: |-
         1a07ce68-7eba-4609-909a-d6731a090138
 
       WHITELIST: |-
         1a07ce68-7eba-4609-909a-d6731a090138
+
+      RCON_CMDS_STARTUP:  |-
+        whitelist off
 
     volumes:
       - "/srv/minecraft/house/server:/data"
