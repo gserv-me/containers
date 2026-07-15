@@ -13,7 +13,6 @@ services:
       DIFFICULTY: "2"
       ENABLE_COMMAND_BLOCK: "true"
       ENABLE_ROLLING_LOGS: "true"
-      ENABLE_WHITELIST: "false"
       EULA: "TRUE"
       EXISTING_OPS_FILE: "MERGE"
       EXISTING_WHITELIST_FILE: "MERGE"
