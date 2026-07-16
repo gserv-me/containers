@@ -57,11 +57,6 @@ services:
       MODRINTH_PROJECTS: |-
         bluemap:kC7iYqja
         nicknames:PDECWy8H
-        
-        connector:1MQDrKN7
-        forgified-fabric-api:XweDEycJ
-        fabrictailor:MNgY2xFj
-        switchy:LtiOTgYV
 
       OPS: |-
         1a07ce68-7eba-4609-909a-d6731a090138
