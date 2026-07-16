@@ -55,8 +55,13 @@ services:
         https://www.curseforge.com/minecraft/mc-mods/dcintegration/files/5332465
 
       MODRINTH_PROJECTS: |-
-        nicknames:PDECWy8H
         bluemap:kC7iYqja
+        
+        styled-nicknames:9k8RQJkW
+        connector:1MQDrKN7
+        forgified-fabric-api:XweDEycJ
+        switchy:LtiOTgYV
+        fabrictailor:MNgY2xFj
 
       OPS: |-
         1a07ce68-7eba-4609-909a-d6731a090138
