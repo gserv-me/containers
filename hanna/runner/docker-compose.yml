@@ -15,7 +15,7 @@ services:
     image: "data.forgejo.org/forgejo/runner:12"
     container_name: "hanna-runner"
 
-    command: "/gserv/scripts/container/forgejo-runner"
+    command: "forgejo-runner daemon --config /data/runner-config.yml"
     restart: "unless-stopped"
 
     links:
@@ -38,7 +38,6 @@ services:
     user: 1001:1001
 
     volumes:
-      - /srv/scripts:/gserv/scripts:ro
       - /srv/docker/hanna/runner/data:/data
       - certs:/certs
 
