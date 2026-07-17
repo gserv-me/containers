@@ -30,10 +30,6 @@ services:
       - DOCKER_TLS_VERIFY=1
       - DOCKER_CERT_PATH=/certs/client
 
-      - FORGEJO_INSTANCE
-      - RUNNER_NAME
-      - RUNNER_TOKEN
-
     # User without root privileges, but with access to `./data`.
     user: 1001:1001
 
