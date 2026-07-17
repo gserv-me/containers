@@ -48,6 +48,7 @@ services:
       TZ: "Europe/Dublin"
       USE_MEOWICE_FLAGS: "true"
       USE_MODPACK_START_SCRIPT: "false"
+      PLAYER_IDLE_TIMEOUT: "15"
       VERSION: "1.20.1"
 
       CF_API_KEY: "${API_KEY}"
