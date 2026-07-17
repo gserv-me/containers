@@ -69,6 +69,7 @@ services:
 
       RCON_CMDS_STARTUP:  |-
         whitelist off
+        chunky continue
 
       RCON_CMDS_ON_CONNECT:  |-
         chunky pause
