@@ -40,7 +40,7 @@ services:
       HIDE_ONLINE_PLAYERS: "true"
       LOG_TIMESTAMP: "true"
       MAX_PLAYERS: "30"
-      MEMORY: "10240M"
+      MEMORY: "12G"
       MOTD: "House of Change"
       PREVIEWS_CHAT: "true"
       SERVER_NAME: "House of Change"
