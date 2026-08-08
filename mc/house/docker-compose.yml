@@ -25,6 +25,9 @@ services:
       - "traefik.http.services.mc-hoc-map.loadbalancer.server.port=25566"
       - "traefik.http.services.mc-hoc-map.loadbalancer.server.scheme=http"
 
+      # Autoheal
+      - "autoheal=true"
+
     networks:
       - web
 
