@@ -6,17 +6,17 @@ services:
     restart: always
 
     ports:
-      - "25665:25565"
+      - "25695:25565"
 
     labels:
       # HTTP
       - "traefik.http.routers.mc-hoc-map_http.entrypoints=web"
-      - "traefik.http.routers.mc-hoc-map_http.rule=Host(`mc-house.mercie.dev`)"
+      - "traefik.http.routers.mc-hoc-map_http.rule=Host(`mc.mercie.dev`)"
       - "traefik.http.routers.mc-hoc-map_http.middlewares=https"
       - "traefik.http.middlewares.https.redirectscheme.scheme=https"
 
       # HTTPS
-      - "traefik.http.routers.mc-hoc-map.rule=Host(`mc-house.mercie.dev`)"
+      - "traefik.http.routers.mc-hoc-map.rule=Host(`mc.mercie.dev`)"
       - "traefik.http.routers.mc-hoc-map.entrypoints=websecure"
       - "traefik.http.routers.mc-hoc-map.tls.certresolver=letsencrypt"
       - "traefik.http.routers.mc-hoc-map.service=mc-hoc-map"
@@ -36,6 +36,7 @@ services:
       DIFFICULTY: "2"
       ENABLE_COMMAND_BLOCK: "true"
       ENABLE_ROLLING_LOGS: "true"
+      ENABLE_WHITELIST: "true"
       EULA: "TRUE"
       EXISTING_OPS_FILE: "MERGE"
       EXISTING_WHITELIST_FILE: "MERGE"
@@ -44,9 +45,10 @@ services:
       LOG_TIMESTAMP: "true"
       MAX_PLAYERS: "30"
       MEMORY: "12G"
-      MOTD: "House of Change"
+      MOTD: "Merciecraft"
+      OVERRIDE_WHITELIST: "false"
       PREVIEWS_CHAT: "true"
-      SERVER_NAME: "House of Change"
+      SERVER_NAME: "Merciecraft"
       TYPE: "FORGE"
       TZ: "Europe/Dublin"
       USE_MEOWICE_FLAGS: "true"
@@ -55,9 +57,6 @@ services:
       VERSION: "1.20.1"
 
       CF_API_KEY: "${API_KEY}"
-
-      CURSEFORGE_FILES: |-
-        https://www.curseforge.com/minecraft/mc-mods/dcintegration/files/5332465
 
       MODRINTH_PROJECTS: |-
         bluemap:kC7iYqja
@@ -84,7 +83,6 @@ services:
       - "/srv/minecraft/house/server:/data"
       - "/srv/minecraft/house/downloads:/downloads"
       - "/srv/minecraft/house/modpacks:/modpacks"
-
 
 networks:
   web:
