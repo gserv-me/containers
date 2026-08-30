@@ -57,12 +57,14 @@ services:
       VERSION: "1.20.1"
 
       CF_API_KEY: "${API_KEY}"
+      DISCORD_TOKEN: "${DISCORD_TOKEN}"
 
       MODRINTH_PROJECTS: |-
         bluemap:kC7iYqja
         nicknames:PDECWy8H
         auto-restart:nH7LrRhA
         astralbot:SHtwiOha
+        kotlin-for-forge:Zsh14XeQ
 
       OPS: |-
         1a07ce68-7eba-4609-909a-d6731a090138
