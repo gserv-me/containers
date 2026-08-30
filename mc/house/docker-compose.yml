@@ -1,6 +1,6 @@
 services:
   mc-hoc:
-    image: itzg/minecraft-server:java17
+    image: itzg/minecraft-server:java21
     tty: true
     stdin_open: true
     restart: always
