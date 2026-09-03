@@ -53,8 +53,8 @@ services:
 
     volumes:
       - type: bind
-        source: /pds
-        target: /srv/pds/data
+        source: /srv/pds/data
+        target: /pds
 
 networks:
   web:
