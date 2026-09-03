@@ -1,0 +1,61 @@
+version: '3.9'
+services:
+  pds:
+    container_name: pds
+    image: ghcr.io/bluesky-social/pds:0.4
+    restart: unless-stopped
+
+    labels:
+      # HTTP
+      - "traefik.http.routers.pds-mercie_http.entrypoints=web"
+      - "traefik.http.routers.pds-mercie_http.rule=Host(`pds.mercie.dev`)|| HostRegexp(`^.+\\.pds\\.mercie\\.dev$`)"
+      - "traefik.http.routers.pds-mercie_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.pds-mercie.rule=Host(`pds.mercie.dev`)|| HostRegexp(`^.+\\.pds\\.mercie\\.dev$`)"
+      - "traefik.http.routers.pds-mercie.entrypoints=websecure"
+      - "traefik.http.routers.pds-mercie.tls.certresolver=letsencrypt-dns"
+      - "traefik.http.routers.pds-mercie.tls.domains[0].main=pds.mercie.dev"
+      - "traefik.http.routers.pds-mercie.tls.domains[0].sans=*.pds.mercie.dev"
+      - "traefik.http.routers.pds-mercie.service=pds-mercie"
+
+      # Load Balancer
+      - "traefik.http.services.pds-mercie.loadbalancer.server.port=3000"
+      - "traefik.http.services.pds-mercie.loadbalancer.server.scheme=http"
+
+      # Autoheal
+      - "autoheal=true"
+
+    networks:
+      - web
+
+    environment:
+      - PDS_JWT_SECRET
+      - PDS_ADMIN_PASSWORD
+      - PDS_EMAIL_SMTP_URL
+      - PDS_EMAIL_FROM_ADDRESS
+      - PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX
+
+      - LOG_ENABLED=true
+      - PDS_BLOB_UPLOAD_LIMIT=314572800
+      - PDS_BLOBSTORE_DISK_LOCATION=/pds/blocks
+      - PDS_BSKY_APP_VIEW_DID=did:web:api.bsky.app
+      - PDS_BSKY_APP_VIEW_URL=https://api.bsky.app
+      - PDS_CRAWLERS=https://bsky.network
+      - PDS_DATA_DIRECTORY=/pds
+      - PDS_DID_PLC_URL=https://plc.directory
+      - PDS_HOSTNAME=pds.mercie.dev
+      - PDS_INVITE_REQUIRED=true
+      - PDS_RATE_LIMITS_ENABLED=true
+      - PDS_REPORT_SERVICE_DID=did:plc:ar7c4by46qjdydhdevvrndac
+      - PDS_REPORT_SERVICE_URL=https://mod.bsky.app
+
+    volumes:
+      - type: bind
+        source: /pds
+        target: /srv/pds/data
+
+networks:
+  web:
+    external: true
