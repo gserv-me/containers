@@ -71,6 +71,12 @@ services:
       - PDS_REPORT_SERVICE_DID=did:plc:ar7c4by46qjdydhdevvrndac
       - PDS_REPORT_SERVICE_URL=https://mod.bsky.app
 
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/xrpc/_health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
     volumes:
       - type: bind
         source: /srv/pds/data
