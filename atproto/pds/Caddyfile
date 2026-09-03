@@ -1,0 +1,34 @@
+{
+	email mercie@mercie.dev
+}
+
+(activitypub_routes) {
+	@activitypub {
+		path /users/* /posts/* /.well-known/webfinger* /.well-known/nodeinfo* /nodeinfo/* /inbox
+	}
+
+	handle @activitypub {
+		reverse_proxy http://activitypub:3001 {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-Host {host}
+		}
+	}
+
+	@activitypub_accept {
+		header Accept *application/activity+json*
+		not path /xrpc/*
+	}
+
+	handle @activitypub_accept {
+		reverse_proxy http://activitypub:3001 {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-Host {host}
+		}
+	}
+}
+
+*.pds.mercie.dev, pds.mercie.dev {
+	reverse_proxy http://pds:3000
+
+	import activitypub_routes
+}

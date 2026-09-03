@@ -1,9 +1,8 @@
 version: '3.9'
 services:
-  pds:
-    container_name: pds
-    image: ghcr.io/bluesky-social/pds:0.4
-    restart: unless-stopped
+  pds_caddy:
+    container_name: pds_caddy
+    image: caddy:2
 
     labels:
       # HTTP
@@ -21,14 +20,35 @@ services:
       - "traefik.http.routers.pds-mercie.service=pds-mercie"
 
       # Load Balancer
-      - "traefik.http.services.pds-mercie.loadbalancer.server.port=3000"
+      - "traefik.http.services.pds-mercie.loadbalancer.server.port=80"
       - "traefik.http.services.pds-mercie.loadbalancer.server.scheme=http"
 
-      # Autoheal
-      - "autoheal=true"
+    depends_on:
+      - pds
+      - activitypub
 
     networks:
+      - pds
       - web
+
+    restart: unless-stopped
+
+    volumes:
+      - type: bind
+        source: /srv/pds/caddy/data
+        target: /data
+
+      - type: bind
+        source: /srv/pds/caddy/etc
+        target: /etc/caddy
+
+  pds:
+    container_name: pds
+    image: ghcr.io/bluesky-social/pds:latest
+    restart: unless-stopped
+
+    networks:
+      - pds
 
     environment:
       - PDS_JWT_SECRET
@@ -56,6 +76,61 @@ services:
         source: /srv/pds/data
         target: /pds
 
+  activitypub:
+    container_name: activitypub
+    image: ghcr.io/msonnb/fedisky:latest
+
+    networks:
+      - pds
+
+    restart: unless-stopped
+
+    depends_on:
+      pds:
+        condition: service_healthy
+        restart: true
+
+    environment:
+      # Service configuration
+      - AP_PORT=3001
+      - AP_HOSTNAME=pds.mercie.dev
+      - AP_VERSION=0.0.1
+
+      # PDS connection (reusing PDS credentials)
+      - PDS_URL=http://pds:3000
+      - PDS_ADMIN_TOKEN=${PDS_ADMIN_PASSWORD}
+      - PDS_HOSTNAME=pds.mercie.dev
+
+      # Database
+      - AP_DB_LOCATION=/data/activitypub.sqlite
+
+      # Firehose subscription
+      - AP_FIREHOSE_ENABLED=true
+
+      # Mastodon bridge account (auto-created on startup)
+      - AP_MASTODON_BRIDGE_ENABLED=true
+      - AP_MASTODON_BRIDGE_HANDLE=activitypub.mercie.dev
+      - AP_MASTODON_BRIDGE_DISPLAY_NAME=ActivityPub Bridge
+      - AP_MASTODON_BRIDGE_DESCRIPTION=This account relays replies from ActivityPub users when replying to accounts on pds.mercie.dev.
+
+      # Bluesky bridge account (auto-created on startup)
+      - AP_BLUESKY_BRIDGE_ENABLED=true
+      - AP_BLUESKY_BRIDGE_HANDLE=atproto.mercie.dev
+      - AP_BLUESKY_BRIDGE_DISPLAY_NAME=ATProto Bridge
+      - AP_BLUESKY_BRIDGE_DESCRIPTION=This account relays replies from external ATProto users replying to proxied ActivityPub accounts on pds.mercie.dev.
+
+      # Constellation (external reply discovery)
+      - AP_CONSTELLATION_URL=https://constellation.microcosm.blue
+
+    volumes:
+      - type: bind
+        source: /srv/pds/activitypub
+        target: /data
+
 networks:
   web:
     external: true
+
+  pds:
+    driver: bridge
+    name: pds
