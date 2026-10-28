@@ -22,5 +22,5 @@ services:
       - "traefik.http.routers.scrypted.service=scrypted"
 
       # Load Balancer
-      - "traefik.http.services.scrypted.loadbalancer.server.port=10443"
+      - "traefik.http.services.scrypted.loadbalancer.server.port=11080"
       - "traefik.http.services.scrypted.loadbalancer.server.scheme=http"
