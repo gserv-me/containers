@@ -1,0 +1,26 @@
+services:
+  scrypted:
+    image: ghcr.io/koush/scrypted
+
+    volumes:
+      - /srv/docker/scrypted/volume:/server/volume
+
+    container_name: scrypted
+    restart: unless-stopped
+    
+    labels:
+      # HTTP
+      - "traefik.http.routers.scrypted_http.entrypoints=web"
+      - "traefik.http.routers.scrypted_http.rule=Host(`scrypted.mercie.dev`)"
+      - "traefik.http.routers.scrypted_http.middlewares=https"
+      - "traefik.http.middlewares.https.redirectscheme.scheme=https"
+
+      # HTTPS
+      - "traefik.http.routers.scrypted.rule=Host(`scrypted.mercie.dev`)"
+      - "traefik.http.routers.scrypted.entrypoints=websecure"
+      - "traefik.http.routers.scrypted.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.scrypted.service=scrypted"
+
+      # Load Balancer
+      - "traefik.http.services.scrypted.loadbalancer.server.port=10443"
+      - "traefik.http.services.scrypted.loadbalancer.server.scheme=http"
