@@ -24,3 +24,10 @@ services:
       # Load Balancer
       - "traefik.http.services.scrypted.loadbalancer.server.port=11080"
       - "traefik.http.services.scrypted.loadbalancer.server.scheme=http"
+
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
