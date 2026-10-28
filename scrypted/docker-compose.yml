@@ -26,8 +26,16 @@ services:
       - "traefik.http.services.scrypted.loadbalancer.server.scheme=http"
 
     networks:
+      - scrypted
       - web
+
+    ports:
+      - "45187:45187"
 
 networks:
   web:
     external: true
+
+  scrypted:
+    driver: bridge
+    name: scrypted
